@@ -1,0 +1,3 @@
+1. fab and overlay can be displayed at same time
+2. duplication quote error
+3. simultaneous deletion of all quotes in a collection
