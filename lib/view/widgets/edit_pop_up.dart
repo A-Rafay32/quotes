@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../model/provider.dart';
-import '../../utils.dart';
-import '../constants.dart';
+import '../../view_model/quotes_view_model.dart';
+import '../../model/models.dart';
+import '../../res/constants.dart';
 
 class EditPopUpCard extends StatelessWidget {
   EditPopUpCard(
@@ -17,15 +17,15 @@ class EditPopUpCard extends StatelessWidget {
   Quote quoteObj;
   @override
   Widget build(BuildContext context) {
-    Provider.of<Model>(context, listen: false).Quotecontroller.text = quote;
-    Provider.of<Model>(context, listen: false).Authorcontroller.text = author;
+    Provider.of<QuotesViewModel>(context, listen: false).Quotecontroller.text =
+        quote;
+    Provider.of<QuotesViewModel>(context, listen: false).Authorcontroller.text =
+        author;
     Size size = MediaQuery.of(context).size;
     return SafeArea(
-        child: Align(
-      alignment: Alignment.center,
-      child: Builder(builder: (context) {
-        return Material(
-          color: Colors.transparent,
+      child: Align(
+        alignment: Alignment.center,
+        child: SingleChildScrollView(
           child: Container(
             decoration: BoxDecoration(
               boxShadow: [
@@ -34,7 +34,7 @@ class EditPopUpCard extends StatelessWidget {
               color: kCardColor,
               borderRadius: const BorderRadius.all(Radius.circular(20)),
             ),
-            height: size.height * 0.5,
+            height: size.height * 0.4,
             width: size.width * 0.8,
             padding: const EdgeInsets.symmetric(
               horizontal: 10,
@@ -43,24 +43,27 @@ class EditPopUpCard extends StatelessWidget {
             child: Column(
               children: [
                 TextField(
-                  controller: Provider.of<Model>(context, listen: false)
-                      .Quotecontroller,
+                  controller:
+                      Provider.of<QuotesViewModel>(context, listen: false)
+                          .Quotecontroller,
                   cursorColor: Colors.white70,
                   style: const TextStyle(fontSize: 21, fontFamily: "Kanit"),
-                  cursorHeight: 22,
-                  maxLines: 5,
+                  cursorHeight: 28,
+                  maxLines: 4,
                   decoration: const InputDecoration(
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.all(20),
                   ),
                 ),
+                Expanded(child: Container()),
                 const Divider(
                   color: Color.fromARGB(179, 214, 202, 202),
                   thickness: 0.6,
                 ),
                 TextField(
-                  controller: Provider.of<Model>(context, listen: false)
-                      .Authorcontroller,
+                  controller:
+                      Provider.of<QuotesViewModel>(context, listen: false)
+                          .Authorcontroller,
                   cursorColor: Colors.white70,
                   cursorHeight: 19,
                   // maxLines: 2,
@@ -70,18 +73,17 @@ class EditPopUpCard extends StatelessWidget {
                     contentPadding: EdgeInsets.all(10),
                   ),
                 ),
-                Expanded(child: Container()),
                 InkWell(
                     onTap: () {
                       //update quote
-                      Provider.of<Model>(context, listen: false)
+                      Provider.of<QuotesViewModel>(context, listen: false)
                           .updateQuote(quoteObj);
                       //Clear controllers
-                      Provider.of<Model>(context, listen: false)
+                      Provider.of<QuotesViewModel>(context, listen: false)
                           .Quotecontroller
                           .clear();
 
-                      Provider.of<Model>(context, listen: false)
+                      Provider.of<QuotesViewModel>(context, listen: false)
                           .Authorcontroller
                           .clear();
 
@@ -92,8 +94,8 @@ class EditPopUpCard extends StatelessWidget {
               ],
             ),
           ),
-        );
-      }),
-    ));
+        ),
+      ),
+    );
   }
 }

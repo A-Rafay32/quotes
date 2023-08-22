@@ -1,9 +1,13 @@
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
-import "package:quotes/database.dart";
-import "package:quotes/model/provider.dart";
-import "package:quotes/view/constants.dart";
-import "package:quotes/view/main_screen.dart";
+
+import 'package:quotes/model/helper/db_helper_quotes.dart';
+import 'package:quotes/view_model/collection_view_model/author_collection.dart';
+import 'package:quotes/view_model/collection_view_model/user_collection.dart';
+import 'package:quotes/view_model/fav_view_model.dart';
+import 'package:quotes/view_model/quotes_view_model.dart';
+import 'package:quotes/res/constants.dart';
+import 'package:quotes/view/screens/main_screen/main_screen.dart';
 import "package:sqflite_common_ffi/sqflite_ffi.dart";
 
 void main() async {
@@ -12,13 +16,13 @@ void main() async {
   // for linux
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfi;
-  databaseFactory.deleteDatabase(
-      "/home/a-rafay/Documents/flutter/quotes/.dart_tool/sqflite_common_ffi/databases/quote.db");
+  // databaseFactory.deleteDatabase(
+  //     "/home/a-rafay/Documents/flutter/quotes/.dart_tool/sqflite_common_ffi/databases/quote.db");
   // DBHelper.testDB();
   // DBHelper.testRI();
   // await DBHelper.clearDB();
-  await Model().start();
-  await DBHelper.openDB();
+  // await Model().start();
+  await DBHelperQuotes.openDB();
   runApp(const app());
 }
 
@@ -27,11 +31,32 @@ class app extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-        create: (context) => Model(),
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (context) => QuotesViewModel(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => FavoriteViewModel(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => AuthorCollectionViewModel(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => UserCollectionViewModel(),
+          ),
+          // Provider<AuthorCollectionViewModel>(
+          //   create: (context) => AuthorCollectionViewModel(),
+          // ),
+          // Provider<FavoriteViewModel>(
+          //   create: (context) => FavoriteViewModel(),
+          // ),
+          // Provider<UserCollectionViewModel>(
+          //   create: (context) => UserCollectionViewModel(),
+          // ),
+        ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-
           theme: ThemeData(
               colorScheme: ColorScheme.fromSwatch(
                 accentColor: kbackgroundColor,

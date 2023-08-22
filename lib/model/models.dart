@@ -1,12 +1,12 @@
 class Quote {
-  int id;
+  // int id;
   String collectionName;
   String author;
   String quote;
   int isFav;
 
   Quote({
-    required this.id,
+    // required this.id,
     required this.author,
     required this.quote,
     required this.isFav,
@@ -15,7 +15,7 @@ class Quote {
 
   Map<String, dynamic> toMap() {
     return {
-      ' id': id,
+      // ' id': id,
       'collectionName': collectionName,
       'author': author,
       'isFav': isFav,
@@ -27,8 +27,6 @@ for the id, we are using a ternary operator: when the id is equal to 0, we chang
 so that SQLite will be able to set the id for us.  */
     };
   }
-
-  
 }
 
 // class FavQuote {
@@ -42,14 +40,19 @@ so that SQLite will be able to set the id for us.  */
 //     required this.quote,
 //   });
 
-
 // }
+class UserCollection {
+  int id;
+  String collectionName;
 
-class Collection {
+  UserCollection({required this.id, required this.collectionName});
+}
+
+class AuthorCollection {
   int id;
   String name;
 
-  Collection({required this.id, required this.name});
+  AuthorCollection({required this.id, required this.name});
 
   Map<String, dynamic> toMap() {
     return {
@@ -61,32 +64,32 @@ class Collection {
 
 List<Quote> quotelist = [
   Quote(
-      id: 1,
+      // id: 1,
       isFav: 0,
       collectionName: "Rene",
       author: "Rene",
       quote: "Hell is another people"),
   Quote(
-      id: 2,
+      // id: 2,
       isFav: 0,
       collectionName: "Carlos",
       author: "Carlos",
       quote: "Hell is me"),
   Quote(
-      id: 3,
+      // id: 3,
       isFav: 0,
       collectionName: "Kant",
       author: "Kant",
       quote: "Hell sex"),
   Quote(
-      id: 4,
+      // id: 4,
       isFav: 0,
       collectionName: "Carlos",
       author: "Carlos",
       quote: "Just Fuck it"),
 ];
-List<Collection> collectionList = [
-  Collection(id: 0, name: "Rene"),
-  Collection(id: 1, name: "Carlos"),
-  Collection(id: 2, name: "Kant"),
+List<AuthorCollection> collectionList = [
+  AuthorCollection(id: 0, name: "Rene"),
+  AuthorCollection(id: 1, name: "Carlos"),
+  AuthorCollection(id: 2, name: "Kant"),
 ];

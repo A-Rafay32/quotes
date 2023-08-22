@@ -1,8 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:quotes/model/provider.dart';
-import '../constants.dart';
+import 'package:quotes/view_model/quotes_view_model.dart';
+import '../../res/constants.dart';
 
 class AddButton extends StatelessWidget {
   const AddButton({super.key});
@@ -67,22 +67,22 @@ class _AddTodoPopupCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TextField(
-                      controller: Provider.of<Model>(context, listen: false)
-                          .Quotecontroller,
+                      controller:
+                          Provider.of<QuotesViewModel>(context, listen: false)
+                              .Quotecontroller,
                       onChanged: (value) {
                         map["quote"] = value;
                       },
                       decoration: const InputDecoration(
-                        hintText: 'Quote',
-                        hintStyle: const TextStyle(color: Colors.black),
+                        hintText: 'Write a quote',
+                        hintStyle: TextStyle(
+                            fontSize: 19,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black87),
                         border: InputBorder.none,
                       ),
                       cursorColor: Colors.black,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 21
-                      ),
-                      
+                      style: const TextStyle(color: Colors.black, fontSize: 21),
                       maxLines: 6,
                     ),
                     const Divider(
@@ -90,22 +90,23 @@ class _AddTodoPopupCard extends StatelessWidget {
                       thickness: 0.6,
                     ),
                     TextField(
-                      controller: Provider.of<Model>(context, listen: false)
-                          .Authorcontroller,
+                      controller:
+                          Provider.of<QuotesViewModel>(context, listen: false)
+                              .Authorcontroller,
                       onChanged: (value) {
                         map["author"] = value;
                       },
                       decoration: const InputDecoration(
                         hintText: 'Author',
-                        hintStyle: TextStyle(color: Colors.black),
+                        hintStyle: TextStyle(
+                            fontSize: 19,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black87),
                         border: InputBorder.none,
                       ),
                       cursorColor: Colors.black,
                       maxLines: 2,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 21
-                      ),
+                      style: const TextStyle(color: Colors.black, fontSize: 21),
                     ),
                     const Divider(
                       color: Colors.black,
@@ -113,7 +114,8 @@ class _AddTodoPopupCard extends StatelessWidget {
                     ),
                     TextButton(
                       onPressed: () {
-                        Provider.of<Model>(context, listen: false).add();
+                        Provider.of<QuotesViewModel>(context, listen: false)
+                            .addQuote();
                       },
                       child: const Text(
                         'Add',
