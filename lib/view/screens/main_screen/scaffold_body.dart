@@ -4,10 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:quotes/view/widgets/insert_text.dart';
 import 'package:quotes/view/widgets/quote_card.dart';
 import 'package:quotes/view/widgets/snackbar.dart';
-import '../../../model/helper/db_helper_quotes.dart';
+import '../../../model/data/db_quotes.dart';
 import '../../../model/models.dart';
-import '../../../view_model/fav_view_model.dart';
-import '../../../view_model/quotes_view_model.dart';
+
+import '../../../view_model/provider.dart';
 
 class ScaffoldBody extends StatefulWidget {
   const ScaffoldBody({
@@ -21,19 +21,16 @@ class ScaffoldBody extends StatefulWidget {
 class _ScaffoldBodyState extends State<ScaffoldBody> {
   @override
   void initState() {
-    Provider.of<QuotesViewModel>(context, listen: false).futureQ =
-        DBHelperQuotes.getQuotes();
+    Provider.of<Model>(context, listen: false).futureQ = DBQuotes.getQuotes();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     double h = MediaQuery.sizeOf(context).height;
-    return Consumer<QuotesViewModel>(builder: (context, model, child) {
+    return Consumer<Model>(builder: (context, model, child) {
       return FutureBuilder(
-        future:
-            // Model().futureQ,
-            model.futureQ,
+        future: model.futureQ,
         builder: (context, snapshot) {
           if (snapshot.data?.isEmpty ?? false) {
             return InsertQuoteText(h: h);
@@ -46,9 +43,7 @@ class _ScaffoldBodyState extends State<ScaffoldBody> {
                           color: Colors.white70, Icons.favorite_outline_rounded)
                       : const Icon(
                           color: Colors.white70, Icons.favorite_rounded),
-                  favorites: () =>
-                      Provider.of<FavoriteViewModel>(context, listen: false)
-                          .switchFavourites(
+                  favorites: () => model.switchFavourites(
                         snapshot.data?[index] ??
                             Quote(
                                 // id: 0,
@@ -70,7 +65,7 @@ class _ScaffoldBodyState extends State<ScaffoldBody> {
                   },
                   delete: () {
                     // add the copy of quote in recentyDel table
-                    DBHelperQuotes.db?.insert("recentlyDel", {
+                    DBQuotes.db?.insert("recentlyDel", {
                       "collectionName": snapshot.data![index].collectionName,
                       "quote": snapshot.data![index].quote,
                       "author": snapshot.data![index].author,

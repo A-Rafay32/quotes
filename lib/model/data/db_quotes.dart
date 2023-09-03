@@ -2,19 +2,10 @@ import 'package:quotes/model/models.dart';
 import 'package:sqflite/sqflite.dart';
 import "package:path/path.dart";
 
-class DBHelperQuotes {
+class DBQuotes {
   static const int version = 1;
   static Database? db;
   static String? path;
-
-  // //singleton pattern implemented here
-  // // private ctor
-  // static final DBHelper _dbHelper = DBHelper._internal();
-  // DBHelper._internal();
-  // // factory ctor , idk shit
-  // factory DBHelper() {
-  //   return _dbHelper;
-  // }
 
   static Future<Database?> openDB() async {
     // if databse is not previously initialized
@@ -43,8 +34,6 @@ class DBHelperQuotes {
       )
     ''');
 
-          // UNIQUE (quote) ON CONFLICT IGNORE,
-
           database.execute('''
       CREATE TABLE favTable(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -64,8 +53,8 @@ class DBHelperQuotes {
     ''');
           database.execute('''
       CREATE TABLE UserCollections(
-        id INTEGER PRIMARY KEY AUTOINCREMENT ,
-        collectionName TEXT 
+        id INTEGER AUTOINCREMENT,
+        collectionName TEXT PRIMARY KEY
       ) 
     ''');
         },
@@ -135,27 +124,7 @@ class DBHelperQuotes {
   //delete
   static Future<int?> delQuote(Quote? quote) async {
     int? result = await db?.delete("quoteTable",
-        where: "quote =?", whereArgs: ["${quote?.quote}"]);
+        where: "quote=?", whereArgs: ["${quote?.quote}"]);
     return result;
   }
-
-  // static Future<void> clearDB() async {
-  //   await db?.delete("quoteTable");
-  //   await db?.delete("collectionTable");
-  //   await db?.delete("favTable");
-  // }
-
-  // static Future testDB() async {
-  //   // db = await openDB();
-  //   await db?.execute("INSERT INTO collectionTable VALUES(0,'Carlos')");
-  //   await db?.execute("INSERT INTO quoteTable VALUES(1,0,'Carlos', 'fuck it')");
-  //   await db?.execute("INSERT INTO quoteTable VALUES(2,0,'Carlos', 'fuck it')");
-  //   await db?.execute("INSERT INTO quoteTable VALUES(0,0,'Carlos', 'fuck it')");
-  //   await db?.execute("INSERT INTO quoteTable VALUES(3,0,'Carlos', 'fuck it')");
-  //   List<Map>? collection = await db?.rawQuery("SELECT * FROM collectionTable");
-  //   List<Map>? quote = await db?.rawQuery("SELECT * FROM quoteTable");
-  //   print(collection.toString());
-  //   print(quote.toString());
-  // }
-  
 }

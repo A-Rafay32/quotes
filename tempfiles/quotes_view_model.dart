@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:quotes/model/helper/db_author_collection.dart';
+import 'package:quotes/model/data/db_author_collection.dart';
 
-import '../model/helper/db_helper_fav.dart';
-import '../model/helper/db_helper_quotes.dart';
-import '../model/models.dart';
+import '../lib/model/data/db_fav.dart';
+import '../lib/model/data/db_quotes.dart';
+import '../lib/model/models.dart';
 import 'collection_view_model/author_collection.dart';
-import 'fav_view_model.dart';
+import '../lib/view_model/fav_view_model.dart';
 
 class QuotesViewModel extends ChangeNotifier {
   // List<String> list = DBHelperQuotes.getQuotes().toString().split(",");
@@ -27,11 +27,11 @@ class QuotesViewModel extends ChangeNotifier {
   };
 
   void init() async {
-    DBHelperQuotes.openDB();
+    DBQuotes.openDB();
     AuthorCollectionViewModel().futureC =
         DBAuthorCollection.getAuthorCollection();
-    futureQ = DBHelperQuotes.getQuotes();
-    FavoriteViewModel().futureFav = DBHelperFav.getFavQuotes();
+    futureQ = DBQuotes.getQuotes();
+    FavoriteViewModel().futureFav = DBFavorites.getFavQuotes();
 
     // print(await DBHelper.db?.query('quoteTable'));
     // print(await DBHelper.db?.query('favTable'));
@@ -40,7 +40,7 @@ class QuotesViewModel extends ChangeNotifier {
   }
 
   void setId() async {
-    List<Quote> data = await DBHelperQuotes.getQuotes();
+    List<Quote> data = await DBQuotes.getQuotes();
     id = data.length;
     print("id : $id");
   }
@@ -74,7 +74,7 @@ class QuotesViewModel extends ChangeNotifier {
     }
 
     //add quote to db
-    await DBHelperQuotes.insertQuote(tempQ);
+    await DBQuotes.insertQuote(tempQ);
 
     //add to quote list
     quotelist.add(tempQ);
@@ -82,7 +82,7 @@ class QuotesViewModel extends ChangeNotifier {
     tempQ.toMap().clear;
 
     //update futures
-    futureQ = DBHelperQuotes.getQuotes();
+    futureQ = DBQuotes.getQuotes();
     AuthorCollectionViewModel().futureC =
         DBAuthorCollection.getAuthorCollection();
 
@@ -120,7 +120,7 @@ class QuotesViewModel extends ChangeNotifier {
 
   void delQuote(Quote? quote) async {
     // delete collection
-    await DBHelperQuotes.delQuote(quote);
+    await DBQuotes.delQuote(quote);
     // check if no quote exist in a collection
     List<Quote> data =
         await DBAuthorCollection.getQuotesOfAuthor(quote?.author ?? "");
@@ -133,8 +133,8 @@ class QuotesViewModel extends ChangeNotifier {
     //update futures
     AuthorCollectionViewModel().futureC =
         DBAuthorCollection.getAuthorCollection();
-    QuotesViewModel().futureQ = DBHelperQuotes.getQuotes();
-    FavoriteViewModel().futureFav = DBHelperFav.getFavQuotes();
+    QuotesViewModel().futureQ = DBQuotes.getQuotes();
+    FavoriteViewModel().futureFav = DBFavorites.getFavQuotes();
     AuthorCollectionViewModel().futureA =
         DBAuthorCollection.getQuotesOfAuthor(quote?.author ?? "");
     //update Id
@@ -144,20 +144,26 @@ class QuotesViewModel extends ChangeNotifier {
 
   void updateQuote(Quote quoteObj) async {
     //update quote
-    DBHelperQuotes.updateQuoteContent(quoteObj, Quotecontroller.text.trim());
-    DBHelperQuotes.updateQuoteAuthor(quoteObj, Authorcontroller.text.trim());
+    DBQuotes.updateQuoteContent(quoteObj, Quotecontroller.text.trim());
+    DBQuotes.updateQuoteAuthor(quoteObj, Authorcontroller.text.trim());
     DBAuthorCollection.updateAuthorName(quoteObj, Authorcontroller.text.trim());
 
     //update futures
     AuthorCollectionViewModel().futureC =
         DBAuthorCollection.getAuthorCollection();
     // print(await DBHelper.db?.query("collectionTable"));
-
-    QuotesViewModel().futureQ = DBHelperQuotes.getQuotes();
+    FavoriteViewModel().futureFav = DBFavorites.getFavQuotes();
+    QuotesViewModel().futureQ = DBQuotes.getQuotes();
     // print(await futureC);
     AuthorCollectionViewModel().futureA =
         DBAuthorCollection.getQuotesOfAuthor(Authorcontroller.text.trim());
     // print(await DBHelper.db?.query("quoteTable"));
+    notifyListeners();
+  }
+
+  void delRecentDelTable() async {
+    await DBQuotes.db?.delete("recentlyDel");
+    futureDel = DBQuotes.getQuotesFrom("recentlyDel");
     notifyListeners();
   }
 }

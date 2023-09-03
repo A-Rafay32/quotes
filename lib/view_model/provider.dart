@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
 
-import '../model/helper/db_author_collection.dart';
-import '../model/helper/db_helper_fav.dart';
-import '../model/helper/db_helper_quotes.dart';
-import '../model/helper/db_user_collection.dart';
+import '../model/data/db_author_collection.dart';
+import '../model/data/db_fav.dart';
+import '../model/data/db_quotes.dart';
+import '../model/data/db_user_collection.dart';
 import '../model/models.dart';
 
 class Model extends ChangeNotifier {
-  TextEditingController Authorcontroller = TextEditingController();
-  TextEditingController Quotecontroller = TextEditingController();
+  TextEditingController authorController = TextEditingController();
+  TextEditingController quoteController = TextEditingController();
   Future<List<Quote>>? futureFav;
   Future<List<Quote>>? futureQ;
   Future<List<Quote>>? futureDel;
   Future<List<Quote>>? futureA;
   Future<List<AuthorCollection>>? futureC;
+  Future<List<UserCollection>>? futureUC;
+  Future<List<Quote>>? futureUserAlbum;
+
+  bool isSelected = false;
+  Color borderColor = Colors.white70;
+  double borderWidth = 1;
 
   int id = 0;
 
@@ -25,28 +31,24 @@ class Model extends ChangeNotifier {
   };
 
   void init() async {
-    DBHelperQuotes.openDB();
+    DBQuotes.openDB();
     futureC = DBAuthorCollection.getAuthorCollection();
-    futureQ = DBHelperQuotes.getQuotes();
-    futureFav = DBHelperFav.getFavQuotes();
-
-    // print(await DBHelper.db?.query('quoteTable'));
-    // print(await DBHelper.db?.query('favTable'));
-    // print(await DBHelper.db?.query('collectionTable'));
+    futureQ = DBQuotes.getQuotes();
+    futureFav = DBFavorites.getFavQuotes();
     notifyListeners();
   }
 
   void setId() async {
-    List<Quote> data = await DBHelperQuotes.getQuotes();
+    List<Quote> data = await DBQuotes.getQuotes();
     id = data.length;
     print("id : $id");
   }
 
   Future start() async {
     var id = quotelist.length;
-    await DBHelperQuotes.openDB();
+    await DBQuotes.openDB();
     for (int i = 0; i < quotelist.length; ++i) {
-      await DBHelperQuotes.insertQuote(quotelist[i]);
+      await DBQuotes.insertQuote(quotelist[i]);
       // await DBHelper.addToFav(quotelist[i]);
     }
 
@@ -57,13 +59,13 @@ class Model extends ChangeNotifier {
 
   void addQuote() async {
     //update the  map
-    map["quote"] = Quotecontroller.text.trim();
+    map["quote"] = quoteController.text.trim();
     print("map[\"quote\"]:" + map["quote"]);
-    map["author"] = Authorcontroller.text.trim();
+    map["author"] = authorController.text.trim();
     print("map[\"author\"]:" + map["author"]);
     //clear the field
-    Quotecontroller.clear();
-    Authorcontroller.clear();
+    quoteController.clear();
+    authorController.clear();
     //now fetch the data from map
     Quote tempQ = Quote(
         // id: id + 1,
@@ -84,7 +86,8 @@ class Model extends ChangeNotifier {
     }
 
     //add quote to db
-    await DBHelperQuotes.insertQuote(tempQ);
+    int? result = await DBQuotes.insertQuote(tempQ);
+    print("addition status : $result");
 
     //add to quote list
     quotelist.add(tempQ);
@@ -92,7 +95,7 @@ class Model extends ChangeNotifier {
     tempQ.toMap().clear;
 
     //update futures
-    futureQ = DBHelperQuotes.getQuotes();
+    futureQ = DBQuotes.getQuotes();
     futureC = DBAuthorCollection.getAuthorCollection();
 
     // futureA = DBHelper.testRI(collection?.name ?? "");
@@ -128,7 +131,7 @@ class Model extends ChangeNotifier {
 
   void delQuote(Quote? quote) async {
     // delete collection
-    await DBHelperQuotes.delQuote(quote);
+    await DBQuotes.delQuote(quote);
     // check if no quote exist in a collection
     List<Quote> data =
         await DBAuthorCollection.getQuotesOfAuthor(quote?.author ?? "");
@@ -140,8 +143,8 @@ class Model extends ChangeNotifier {
     }
     //update futures
     futureC = DBAuthorCollection.getAuthorCollection();
-    futureQ = DBHelperQuotes.getQuotes();
-    futureFav = DBHelperFav.getFavQuotes();
+    futureQ = DBQuotes.getQuotes();
+    futureFav = DBFavorites.getFavQuotes();
     futureA = DBAuthorCollection.getQuotesOfAuthor(quote?.author ?? "");
     //update Id
     setId();
@@ -150,41 +153,36 @@ class Model extends ChangeNotifier {
 
   void updateQuote(Quote quoteObj) async {
     //update quote
-    DBHelperQuotes.updateQuoteContent(quoteObj, Quotecontroller.text.trim());
-    DBHelperQuotes.updateQuoteAuthor(quoteObj, Authorcontroller.text.trim());
-    DBAuthorCollection.updateAuthorName(quoteObj, Authorcontroller.text.trim());
+    DBQuotes.updateQuoteContent(quoteObj, quoteController.text.trim());
+    DBQuotes.updateQuoteAuthor(quoteObj, authorController.text.trim());
+    DBAuthorCollection.updateAuthorName(quoteObj, authorController.text.trim());
 
     //update futures
     futureC = DBAuthorCollection.getAuthorCollection();
     // print(await DBHelper.db?.query("collectionTable"));
 
-    futureQ = DBHelperQuotes.getQuotes();
+    futureQ = DBQuotes.getQuotes();
     // print(await futureC);
     futureA =
-        DBAuthorCollection.getQuotesOfAuthor(Authorcontroller.text.trim());
+        DBAuthorCollection.getQuotesOfAuthor(authorController.text.trim());
     // print(await DBHelper.db?.query("quoteTable"));
     notifyListeners();
   }
 
   void switchFavourites(Quote? quote) async {
-    await DBHelperFav.switchFavourites(quote ??
+    await DBFavorites.switchFavourites(quote ??
         Quote(
             // id: 0,
             author: "",
             quote: "",
             isFav: 0,
             collectionName: ""));
-    // await DBHelper.removeFromFav(quote ??
-    //       Quote(id: 0, author: "", quote: "", isFav: 0, collectionName: ""));
-
-    // await DBHelper.addToFav(quote ??
-    //     Quote(id: 0, author: "", quote: "", isFav: 0, collectionName: ""));
 
     notifyListeners();
     // Update futures
     futureC = DBAuthorCollection.getAuthorCollection();
-    futureQ = DBHelperQuotes.getQuotes();
-    futureFav = DBHelperFav.getFavQuotes();
+    futureQ = DBQuotes.getQuotes();
+    futureFav = DBFavorites.getFavQuotes();
   }
 
   void delCollection(AuthorCollection? collection) async {
@@ -193,9 +191,9 @@ class Model extends ChangeNotifier {
     await DBAuthorCollection.delAuthorCollection(collection?.name ?? "");
 
     //update futures
-    futureQ = DBHelperQuotes.getQuotes();
+    futureQ = DBQuotes.getQuotes();
     futureC = DBAuthorCollection.getAuthorCollection();
-    futureFav = DBHelperFav.getFavQuotes();
+    futureFav = DBFavorites.getFavQuotes();
     futureA = DBAuthorCollection.getQuotesOfAuthor(collection?.name ?? "");
 
     notifyListeners();
@@ -203,7 +201,7 @@ class Model extends ChangeNotifier {
 
   void delFavQuote(Quote? quote) async {
     //del FavQuotes
-    await DBHelperFav.delFavQuotes(quote ??
+    await DBFavorites.delFavQuotes(quote ??
         Quote(
             // id: 0,
             author: "",
@@ -223,8 +221,8 @@ class Model extends ChangeNotifier {
 
     //update futures
     futureC = DBAuthorCollection.getAuthorCollection();
-    futureQ = DBHelperQuotes.getQuotes();
-    futureFav = DBHelperFav.getFavQuotes();
+    futureQ = DBQuotes.getQuotes();
+    futureFav = DBFavorites.getFavQuotes();
     futureA = DBAuthorCollection.getQuotesOfAuthor(quote?.author ?? "");
 
     notifyListeners();
@@ -235,11 +233,20 @@ class Model extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<UserCollection>>? futureUC;
-
   void addUserCollection(String collectionName) async {
     DBUserCollection.addUserCollection(collectionName);
-    futureUC = DBUserCollection.getUserCollection();
+    futureUC = DBUserCollection.getUserCollections();
+    notifyListeners();
+  }
+
+  void delRecentDelTable() async {
+    await DBQuotes.db?.delete("recentlyDel");
+    futureDel = DBQuotes.getQuotesFrom("recentlyDel");
+    notifyListeners();
+  }
+
+  void unSelectAlbum() {
+    isSelected = !isSelected;
     notifyListeners();
   }
 }

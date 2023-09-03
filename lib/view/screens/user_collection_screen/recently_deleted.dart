@@ -4,11 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:quotes/view/widgets/quote_card.dart';
 import 'package:quotes/view/widgets/snackbar.dart';
 
-import '../../../model/helper/db_helper_quotes.dart';
+import '../../../model/data/db_quotes.dart';
 import '../../../res/constants.dart';
 import '../../../model/models.dart';
-import '../../../view_model/fav_view_model.dart';
-import '../../../view_model/quotes_view_model.dart';
+import '../../../view_model/provider.dart';
 
 class RecentlyDelScreen extends StatefulWidget {
   const RecentlyDelScreen({super.key});
@@ -20,8 +19,8 @@ class RecentlyDelScreen extends StatefulWidget {
 class _RecentlyDelScreenState extends State<RecentlyDelScreen> {
   @override
   void initState() {
-    Provider.of<QuotesViewModel>(context, listen: false).futureDel =
-        DBHelperQuotes.getQuotesFrom("recentlyDel");
+    Provider.of<Model>(context, listen: false).futureDel =
+        DBQuotes.getQuotesFrom("recentlyDel");
 
     super.initState();
   }
@@ -33,6 +32,17 @@ class _RecentlyDelScreenState extends State<RecentlyDelScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+              tooltip: "Delete All",
+              onPressed: () {
+                Provider.of<Model>(context, listen: false).delRecentDelTable();
+              },
+              icon: const Icon(
+                  size: 29,
+                  color: Colors.white70,
+                  Icons.delete_outline_rounded))
+        ],
         centerTitle: true,
         backgroundColor: kbackgroundColor,
         elevation: 0,
@@ -57,7 +67,7 @@ class _RecentlyDelScreenState extends State<RecentlyDelScreen> {
           SizedBox(
             height: h * 0.8,
             width: w,
-            child: Consumer<QuotesViewModel>(builder: (context, model, child) {
+            child: Consumer<Model>(builder: (context, model, child) {
               return FutureBuilder(
                 future: model.futureDel,
                 builder: (context, snapshot) {
@@ -71,7 +81,9 @@ class _RecentlyDelScreenState extends State<RecentlyDelScreen> {
                               : const Icon(
                                   color: Colors.white70,
                                   Icons.favorite_rounded),
-                          favorites: () => Provider.of<FavoriteViewModel>(context,listen: false).switchFavourites(
+                          favorites: () =>
+                              Provider.of<Model>(context, listen: false)
+                                  .switchFavourites(
                                 snapshot.data?[index] ??
                                     Quote(
                                         // id: 0,

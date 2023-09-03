@@ -3,13 +3,12 @@ import 'package:provider/provider.dart';
 import 'package:quotes/res/constants.dart';
 import 'package:quotes/view/screens/fav_screen/favourites.dart';
 import 'package:quotes/view/screens/main_screen/scaffold_body.dart';
-import 'package:quotes/view/screens/user_collection_screen/user_collection.dart';
 import 'package:quotes/view/screens/user_collection_screen/your_collection.dart';
 import 'package:quotes/view/widgets/add_button.dart';
 
-import '../../../view_model/quotes_view_model.dart';
 import '../../../model/models.dart';
 
+import '../../../view_model/provider.dart';
 import 'drawer.dart';
 
 class MainScreen extends StatefulWidget {
@@ -25,7 +24,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
-    Provider.of<QuotesViewModel>(context, listen: false).init();
+    Provider.of<Model>(context, listen: false).init();
     super.initState();
   }
 
@@ -54,7 +53,9 @@ class _MainScreenState extends State<MainScreen> {
       floatingActionButton:
           // FloatingActionButton(onPressed: (){},),
 
-          const AddButton(),
+          AddButton(
+              onPressed: () =>
+                  Provider.of<Model>(context, listen: false).addQuote()),
       bottomNavigationBar: BottomAppBar(
         padding: EdgeInsets.symmetric(horizontal: size.width * 0.18),
         height: size.height * 0.08,
@@ -81,7 +82,7 @@ class _MainScreenState extends State<MainScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const CollectionScreen(),
+                        builder: (context) => const YourCollectionScreen(),
                       ));
                 },
                 icon: const Icon(Icons.format_quote_sharp)),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:quotes/model/helper/db_author_collection.dart';
-import 'package:quotes/model/helper/db_helper_quotes.dart';
-import 'package:quotes/view_model/collection_view_model/author_collection.dart';
-import 'package:quotes/view_model/quotes_view_model.dart';
+import 'package:quotes/model/data/db_author_collection.dart';
+import 'package:quotes/model/data/db_quotes.dart';
+import '../../tempfiles/collection_view_model/author_collection.dart';
+import 'quotes_view_model.dart';
 import '../model/helper/db_helper_fav.dart';
 import '../model/models.dart';
 
@@ -26,7 +26,7 @@ class FavoriteViewModel extends ChangeNotifier {
     // Update futures
     AuthorCollectionViewModel().futureC =
         DBAuthorCollection.getAuthorCollection();
-    QuotesViewModel().futureQ = DBHelperQuotes.getQuotes();
+    QuotesViewModel().futureQ = DBQuotes.getQuotes();
     futureFav = DBHelperFav.getFavQuotes();
     notifyListeners();
   }
@@ -37,7 +37,7 @@ class FavoriteViewModel extends ChangeNotifier {
     await DBAuthorCollection.delAuthorCollection(collection?.name ?? "");
 
     //update futures
-    QuotesViewModel().futureQ = DBHelperQuotes.getQuotes();
+    QuotesViewModel().futureQ = DBQuotes.getQuotes();
     AuthorCollectionViewModel().futureC =
         DBAuthorCollection.getAuthorCollection();
     futureFav = DBHelperFav.getFavQuotes();
@@ -70,7 +70,7 @@ class FavoriteViewModel extends ChangeNotifier {
     //update futures
     AuthorCollectionViewModel().futureC =
         DBAuthorCollection.getAuthorCollection();
-    QuotesViewModel().futureQ = DBHelperQuotes.getQuotes();
+    QuotesViewModel().futureQ = DBQuotes.getQuotes();
     futureFav = DBHelperFav.getFavQuotes();
     AuthorCollectionViewModel().futureA =
         DBAuthorCollection.getQuotesOfAuthor(quote?.author ?? "");

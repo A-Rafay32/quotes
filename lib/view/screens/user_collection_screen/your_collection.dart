@@ -1,32 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:quotes/model/helper/db_helper_quotes.dart';
-import 'package:quotes/model/helper/db_user_collection.dart';
+import 'package:quotes/model/data/db_quotes.dart';
+import 'package:quotes/model/data/db_user_collection.dart';
 import 'package:quotes/view/screens/user_collection_screen/recently_deleted.dart';
+import 'package:quotes/view/screens/user_collection_screen/user_collection.dart';
 import 'package:quotes/view/widgets/collection_card.dart';
-import 'package:quotes/view_model/collection_view_model/user_collection.dart';
 
 import '../../../res/constants.dart';
+import '../../../view_model/provider.dart';
 
-class CollectionScreen extends StatefulWidget {
-  const CollectionScreen({super.key});
+class YourCollectionScreen extends StatefulWidget {
+  const YourCollectionScreen({super.key});
 
   @override
-  State<CollectionScreen> createState() => _CollectionScreenState();
+  State<YourCollectionScreen> createState() => _YourCollectionScreenState();
 }
 
-class _CollectionScreenState extends State<CollectionScreen> {
+class _YourCollectionScreenState extends State<YourCollectionScreen> {
   @override
   void initState() {
-    Provider.of<UserCollectionViewModel>(context, listen: false).futureUC =
-        DBUserCollection.getUserCollection();
+    Provider.of<Model>(context, listen: false).futureUC =
+        DBUserCollection.getUserCollections();
     super.initState();
     test();
   }
 
   void test() async {
-    List result = await DBUserCollection.getUserCollection();
+    List result = await DBUserCollection.getUserCollections();
     print(result);
   }
 
@@ -35,47 +36,88 @@ class _CollectionScreenState extends State<CollectionScreen> {
     double h = MediaQuery.sizeOf(context).height;
     double w = MediaQuery.sizeOf(context).width;
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: kbackgroundColor,
-        elevation: 0,
-        title: const Text(
-          "Your Collection",
-          style: TextStyle(fontFamily: "Ramaraja", fontSize: 28),
-        ),
-      ),
-      body: Column(
-        children: [
-          CreateCollection(),
-          const RecentlyDeletedWidget(),
-          const SizedBox(
-            height: 10,
-          ),
-          SizedBox(
-            height: h * 0.7,
-            width: w,
-            child: Consumer<UserCollectionViewModel>(
-              builder: (context, model, child) {
-                return FutureBuilder(
-                  future: model.futureUC,
-                  builder: (context, snapshot) {
-                    return GridView.builder(
-                      scrollDirection: Axis.vertical,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                              childAspectRatio: 2.0, crossAxisCount: 2),
-                      itemCount: snapshot.data?.length,
-                      itemBuilder: (context, index) {
-                        return CollectionCard(
-                            text: snapshot.data?[index].collectionName ?? "");
-                      },
-                    );
-                  },
-                );
-              },
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(64),
+        child: Consumer<Model>(builder: (context, model, child) {
+          return AppBar(
+            actions: [
+              if (model.isSelected)
+                IconButton(
+                    onPressed: () {
+                      DBQuotes.db!.database.delete("UserCollections");
+                    },
+                    icon: const Icon(
+                      Icons.delete_outline_rounded,
+                      size: 29,
+                      color: Colors.white,
+                    ))
+            ],
+            centerTitle: true,
+            backgroundColor: kbackgroundColor,
+            elevation: 0,
+            title: const Text(
+              "Your Collection",
+              style: TextStyle(fontFamily: "Ramaraja", fontSize: 28),
             ),
-          )
-        ],
+          );
+        }),
+      ),
+      body: GestureDetector(
+        onTap: () {
+          Provider.of<Model>(context, listen: false).unSelectAlbum();
+        },
+        child: Column(
+          children: [
+            CreateCollection(),
+            const RecentlyDeletedWidget(),
+            const SizedBox(
+              height: 10,
+            ),
+            SizedBox(
+              height: h * 0.7,
+              width: w,
+              child: Consumer<Model>(
+                builder: (context, model, child) {
+                  return FutureBuilder(
+                    future: model.futureUC,
+                    builder: (context, snapshot) {
+                      return GridView.builder(
+                        scrollDirection: Axis.vertical,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                childAspectRatio: 2.0, crossAxisCount: 2),
+                        itemCount: snapshot.data?.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => UserCollectionScreen(
+                                    collectionName:
+                                        snapshot.data?[index].collectionName ??
+                                            ""),
+                              ));
+                            },
+                            onLongPress: () {
+                              Provider.of<Model>(context, listen: false)
+                                  .unSelectAlbum();
+                            },
+                            child: CollectionCard(
+                                borderColor: model.isSelected
+                                    ? PopupCardColor
+                                    : Colors.white70,
+                                borderWidth: model.isSelected ? 3 : 1,
+                                text:
+                                    snapshot.data?[index].collectionName ?? ""),
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -114,13 +156,13 @@ class CreateCollection extends StatelessWidget {
                   onPressed: () async {
                     DBUserCollection.createTable(
                         collectionController.text.toString());
-                    Provider.of<UserCollectionViewModel>(context, listen: false)
+                    Provider.of<Model>(context, listen: false)
                         .addUserCollection(
                             collectionController.text.toString());
 
                     Navigator.pop(context);
                     List<Map> result =
-                        await DBHelperQuotes.db!.query("UserCollections");
+                        await DBQuotes.db!.query("UserCollections");
                     print(result);
                   },
                   child: const Text("OK",

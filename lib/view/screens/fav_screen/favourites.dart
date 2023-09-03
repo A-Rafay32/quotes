@@ -7,10 +7,11 @@ import 'package:quotes/view/widgets/edit_pop_up.dart';
 import 'package:quotes/view/widgets/quote_card.dart';
 import 'package:quotes/view/widgets/snackbar.dart';
 
-import '../../../model/helper/db_helper_fav.dart';
-import '../../../view_model/fav_view_model.dart';
+import '../../../model/data/db_fav.dart';
+
 import '../../../model/models.dart';
 import '../../../res/constants.dart';
+import '../../../view_model/provider.dart';
 
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});
@@ -22,8 +23,8 @@ class FavoritesScreen extends StatefulWidget {
 class _FavoritesScreenState extends State<FavoritesScreen> {
   @override
   void initState() {
-    Provider.of<FavoriteViewModel>(context, listen: false).futureFav =
-        DBHelperFav.getFavQuotes();
+    Provider.of<Model>(context, listen: false).futureFav =
+        DBFavorites.getFavQuotes();
 
     super.initState();
   }
@@ -46,7 +47,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 fontSize: 37, fontFamily: "Ramaraja", color: Colors.white)),
       ),
       // (futureA.isEmpty) ? Consumer : Wow such Empty
-      body: Consumer<FavoriteViewModel>(builder: (context, model, child) {
+      body: Consumer<Model>(builder: (context, model, child) {
         return FutureBuilder(
           future: model.futureFav,
           builder: (context, snapshot) {

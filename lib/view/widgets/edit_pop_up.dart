@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../view_model/quotes_view_model.dart';
 import '../../model/models.dart';
 import '../../res/constants.dart';
+import '../../view_model/provider.dart';
 
 class EditPopUpCard extends StatelessWidget {
   EditPopUpCard(
@@ -17,84 +17,61 @@ class EditPopUpCard extends StatelessWidget {
   Quote quoteObj;
   @override
   Widget build(BuildContext context) {
-    Provider.of<QuotesViewModel>(context, listen: false).Quotecontroller.text =
-        quote;
-    Provider.of<QuotesViewModel>(context, listen: false).Authorcontroller.text =
-        author;
-    Size size = MediaQuery.of(context).size;
-    return SafeArea(
-      child: Align(
-        alignment: Alignment.center,
-        child: SingleChildScrollView(
-          child: Container(
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(color: Colors.black, blurRadius: size.height)
-              ],
-              color: kCardColor,
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
-            ),
-            height: size.height * 0.4,
-            width: size.width * 0.8,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 10,
-            ),
-            child: Column(
-              children: [
-                TextField(
-                  controller:
-                      Provider.of<QuotesViewModel>(context, listen: false)
-                          .Quotecontroller,
-                  cursorColor: Colors.white70,
-                  style: const TextStyle(fontSize: 21, fontFamily: "Kanit"),
-                  cursorHeight: 28,
-                  maxLines: 4,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.all(20),
-                  ),
-                ),
-                Expanded(child: Container()),
-                const Divider(
-                  color: Color.fromARGB(179, 214, 202, 202),
-                  thickness: 0.6,
-                ),
-                TextField(
-                  controller:
-                      Provider.of<QuotesViewModel>(context, listen: false)
-                          .Authorcontroller,
-                  cursorColor: Colors.white70,
-                  cursorHeight: 19,
-                  // maxLines: 2,
-                  style: const TextStyle(fontSize: 20, fontFamily: "Rajdhani"),
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.all(10),
-                  ),
-                ),
-                InkWell(
-                    onTap: () {
-                      //update quote
-                      Provider.of<QuotesViewModel>(context, listen: false)
-                          .updateQuote(quoteObj);
-                      //Clear controllers
-                      Provider.of<QuotesViewModel>(context, listen: false)
-                          .Quotecontroller
-                          .clear();
-
-                      Provider.of<QuotesViewModel>(context, listen: false)
-                          .Authorcontroller
-                          .clear();
-
-                      Navigator.pop(context);
-                    },
-                    child: const Icon(
-                        color: Colors.white70, size: 28, Icons.done)),
-              ],
+    Provider.of<Model>(context, listen: false).quoteController.text = quote;
+    Provider.of<Model>(context, listen: false).authorController.text = author;
+    final h = MediaQuery.sizeOf(context).height;
+    final w = MediaQuery.sizeOf(context).width;
+    return AlertDialog(
+      backgroundColor: kCardColor,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20))),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller:
+                Provider.of<Model>(context, listen: false).quoteController,
+            cursorColor: Colors.white70,
+            style: const TextStyle(fontSize: 21, fontFamily: "Kanit"),
+            cursorHeight: 28,
+            maxLines: 5,
+            decoration: const InputDecoration(
+              border: InputBorder.none,
             ),
           ),
-        ),
+          const Divider(
+            color: Color.fromARGB(179, 214, 202, 202),
+            thickness: 0.6,
+          ),
+          TextField(
+            controller:
+                Provider.of<Model>(context, listen: false).authorController,
+            cursorColor: Colors.white70,
+            cursorHeight: 19,
+            // maxLines: 2,
+            style: const TextStyle(fontSize: 20, fontFamily: "Rajdhani"),
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+            ),
+          ),
+          InkWell(
+              onTap: () {
+                //update quote
+                Provider.of<Model>(context, listen: false)
+                    .updateQuote(quoteObj);
+                //Clear controllers
+                Provider.of<Model>(context, listen: false)
+                    .quoteController
+                    .clear();
+
+                Provider.of<Model>(context, listen: false)
+                    .authorController
+                    .clear();
+
+                Navigator.pop(context);
+              },
+              child: const Icon(color: Colors.white70, size: 28, Icons.done)),
+        ],
       ),
     );
   }

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-import 'package:quotes/model/helper/db_author_collection.dart';
+import 'package:quotes/model/data/db_author_collection.dart';
 
 import '../../../res/constants.dart';
-import '../../../view_model/collection_view_model/author_collection.dart';
+
+import '../../../view_model/provider.dart';
 import '../author_collection_screen/author_collection_screen.dart';
 
 class CustomDrawer extends StatefulWidget {
@@ -22,7 +23,7 @@ class CustomDrawer extends StatefulWidget {
 class _CustomDrawerState extends State<CustomDrawer> {
   @override
   void initState() {
-    Provider.of<AuthorCollectionViewModel>(context, listen: false).futureC =
+    Provider.of<Model>(context, listen: false).futureC =
         DBAuthorCollection.getAuthorCollection();
     super.initState();
   }
@@ -35,8 +36,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.horizontal(right: Radius.circular(40))),
         backgroundColor: kbackgroundColor,
-        child: Consumer<AuthorCollectionViewModel>(
-            builder: (context, model, child) {
+        child: Consumer<Model>(builder: (context, model, child) {
           return FutureBuilder(
             future: model.futureC,
             builder: (context, snapshot) => Column(

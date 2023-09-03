@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:quotes/view/widgets/add_button.dart';
 //for copy
 
-import '../../res/constants.dart';
 import '../../model/models.dart';
+import '../../res/constants.dart';
 import 'edit_pop_up.dart';
 
 class QuoteTile extends StatelessWidget {
@@ -30,16 +29,15 @@ class QuoteTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return GestureDetector(
         onLongPress: () {},
-        onDoubleTap: () =>
-            Navigator.of(context).push(HeroDialogRoute(builder: (context) {
-              return EditPopUpCard(
-                  author: quoteObj.author,
-                  quote: quoteObj.quote,
-                  quoteObj: quoteObj);
-            })),
+        onDoubleTap: () => showDialog(
+          
+            context: context,
+            builder: (context) => EditPopUpCard(
+                author: quoteObj.author,
+                quote: quoteObj.quote,
+                quoteObj: quoteObj)),
         child: Container(
           margin: const EdgeInsets.all(8),
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
@@ -52,10 +50,7 @@ class QuoteTile extends StatelessWidget {
                     color: Colors.transparent,
                     offset: Offset(10, 10))
               ]),
-          // child: Hero(
-          //   tag: "edit-pop-up-card-${quoteObj.quote}",
-          //   child: Material(
-          //     color: Colors.transparent,
+
           child: Column(children: [
             Text(
               quote,

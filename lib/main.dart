@@ -1,11 +1,8 @@
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 
-import 'package:quotes/model/helper/db_helper_quotes.dart';
-import 'package:quotes/view_model/collection_view_model/author_collection.dart';
-import 'package:quotes/view_model/collection_view_model/user_collection.dart';
-import 'package:quotes/view_model/fav_view_model.dart';
-import 'package:quotes/view_model/quotes_view_model.dart';
+import 'package:quotes/model/data/db_quotes.dart';
+import 'package:quotes/view_model/provider.dart';
 import 'package:quotes/res/constants.dart';
 import 'package:quotes/view/screens/main_screen/main_screen.dart';
 import "package:sqflite_common_ffi/sqflite_ffi.dart";
@@ -22,7 +19,7 @@ void main() async {
   // DBHelper.testRI();
   // await DBHelper.clearDB();
   // await Model().start();
-  await DBHelperQuotes.openDB();
+  await DBQuotes.openDB();
   runApp(const app());
 }
 
@@ -31,30 +28,8 @@ class app extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-        providers: [
-          ChangeNotifierProvider(
-            create: (context) => QuotesViewModel(),
-          ),
-          ChangeNotifierProvider(
-            create: (context) => FavoriteViewModel(),
-          ),
-          ChangeNotifierProvider(
-            create: (context) => AuthorCollectionViewModel(),
-          ),
-          ChangeNotifierProvider(
-            create: (context) => UserCollectionViewModel(),
-          ),
-          // Provider<AuthorCollectionViewModel>(
-          //   create: (context) => AuthorCollectionViewModel(),
-          // ),
-          // Provider<FavoriteViewModel>(
-          //   create: (context) => FavoriteViewModel(),
-          // ),
-          // Provider<UserCollectionViewModel>(
-          //   create: (context) => UserCollectionViewModel(),
-          // ),
-        ],
+    return ChangeNotifierProvider(
+        create: (context) => Model(),
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData(

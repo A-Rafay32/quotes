@@ -1,18 +1,20 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:quotes/view_model/quotes_view_model.dart';
+
 import '../../res/constants.dart';
+import '../../view_model/provider.dart';
 
 class AddButton extends StatelessWidget {
-  const AddButton({super.key});
+  const AddButton({super.key, required this.onPressed});
+  final Function() onPressed;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
           Navigator.of(context).push(HeroDialogRoute(builder: (context) {
-            return _AddTodoPopupCard();
+            return _AddTodoPopupCard(onPressed);
           }));
         },
         child: Hero(
@@ -35,7 +37,10 @@ class AddButton extends StatelessWidget {
 
 class _AddTodoPopupCard extends StatelessWidget {
   /// {@macro add_todo_popup_card}
-  _AddTodoPopupCard();
+  _AddTodoPopupCard(
+    this.onPressed,
+  );
+  final Function() onPressed;
 
   Map<String, dynamic> map = {
     "id": "",
@@ -67,9 +72,8 @@ class _AddTodoPopupCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TextField(
-                      controller:
-                          Provider.of<QuotesViewModel>(context, listen: false)
-                              .Quotecontroller,
+                      controller: Provider.of<Model>(context, listen: false)
+                          .quoteController,
                       onChanged: (value) {
                         map["quote"] = value;
                       },
@@ -90,9 +94,8 @@ class _AddTodoPopupCard extends StatelessWidget {
                       thickness: 0.6,
                     ),
                     TextField(
-                      controller:
-                          Provider.of<QuotesViewModel>(context, listen: false)
-                              .Authorcontroller,
+                      controller: Provider.of<Model>(context, listen: false)
+                          .authorController,
                       onChanged: (value) {
                         map["author"] = value;
                       },
@@ -113,10 +116,7 @@ class _AddTodoPopupCard extends StatelessWidget {
                       thickness: 0.6,
                     ),
                     TextButton(
-                      onPressed: () {
-                        Provider.of<QuotesViewModel>(context, listen: false)
-                            .addQuote();
-                      },
+                      onPressed: onPressed,
                       child: const Text(
                         'Add',
                         style: TextStyle(color: Colors.black),

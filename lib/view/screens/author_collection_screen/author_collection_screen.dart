@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:quotes/model/helper/db_author_collection.dart';
+import 'package:quotes/model/data/db_author_collection.dart';
 import 'package:quotes/model/models.dart';
 import 'package:quotes/res/constants.dart';
 import 'package:quotes/view/widgets/quote_card.dart';
-import 'package:quotes/view_model/collection_view_model/author_collection.dart';
-import 'package:quotes/view_model/fav_view_model.dart';
 
-import '../../../view_model/quotes_view_model.dart';
+import '../../../view_model/provider.dart';
 
 class AuthorCollectionScreen extends StatefulWidget {
   AuthorCollectionScreen({super.key, required this.collectionName});
@@ -20,7 +18,7 @@ class AuthorCollectionScreen extends StatefulWidget {
 class _AuthorCollectionScreenState extends State<AuthorCollectionScreen> {
   @override
   void initState() {
-    Provider.of<AuthorCollectionViewModel>(context, listen: false).futureA =
+    Provider.of<Model>(context, listen: false).futureA =
         DBAuthorCollection.getQuotesOfAuthor(widget.collectionName.toString());
 
     super.initState();
@@ -43,7 +41,7 @@ class _AuthorCollectionScreenState extends State<AuthorCollectionScreen> {
             style: const TextStyle(
                 fontSize: 37, fontFamily: "Ramaraja", color: Colors.white)),
       ),
-      body: Consumer<AuthorCollectionViewModel>(builder: (context, model, child) {
+      body: Consumer<Model>(builder: (context, model, child) {
         return FutureBuilder(
           future: model.futureA,
           builder: (context, snapshot) {
@@ -56,16 +54,15 @@ class _AuthorCollectionScreenState extends State<AuthorCollectionScreen> {
                             Icons.favorite_outline_rounded)
                         : const Icon(
                             color: Colors.white70, Icons.favorite_rounded),
-                    favorites: () =>
-                        Provider.of<FavoriteViewModel>(context,listen: false).switchFavourites(snapshot.data![index]),
+                    favorites: () => Provider.of<Model>(context, listen: false)
+                        .switchFavourites(snapshot.data![index]),
                     copy: () async {
                       await Clipboard.setData(
                           const ClipboardData(text: "your text"));
                       // copied successfully
                     },
-                    delete: () =>
-                        
-                        Provider.of<QuotesViewModel>(context,listen: false).delQuote(snapshot.data?[index] ??
+                    delete: () => Provider.of<Model>(context, listen: false)
+                        .delQuote(snapshot.data?[index] ??
                             Quote(
                                 author: "",
                                 quote: "",

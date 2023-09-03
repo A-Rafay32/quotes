@@ -1,10 +1,10 @@
 import 'package:sqflite/sqflite.dart';
 
 import '../models.dart';
-import 'db_helper_quotes.dart';
+import 'db_quotes.dart';
 
 class DBAuthorCollection {
-  static Database? db = DBHelperQuotes.db;
+  static Database? db = DBQuotes.db;
 
   //******************************************************************************* */
 //***************************[All collectionTable Functions]*******************/

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:quotes/model/helper/db_author_collection.dart';
+import 'package:quotes/model/data/db_author_collection.dart';
 
-import '../../model/models.dart';
+import '../../lib/model/models.dart';
 
 class AuthorCollectionViewModel extends ChangeNotifier {
   Future<List<Quote>>? futureA;
