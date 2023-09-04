@@ -245,8 +245,46 @@ class Model extends ChangeNotifier {
     notifyListeners();
   }
 
+  void delRecentDelQuote(String quote) async {
+    await DBQuotes.db
+        ?.delete("recentlyDel", where: "quote=?", whereArgs: [quote]);
+    futureDel = DBQuotes.getQuotesFrom("recentlyDel");
+    notifyListeners();
+  }
+
   void unSelectAlbum() {
     isSelected = !isSelected;
+    notifyListeners();
+  }
+
+  void addQuoteToUserCollection(String collectionName, Quote quote) async {
+    await DBUserCollection.addQuoteToUserCollection(collectionName, quote);
+    futureUserAlbum = DBUserCollection.getUserCollection(collectionName);
+    notifyListeners();
+  }
+
+  void updateUserCollectionQuote({
+    required String collectionName,
+    required String newQuote,
+    required String oldQuote,
+    required String newAuthor,
+  }) async {
+    await DBUserCollection.updateUserCollectionQuote(
+        collectionName, newQuote, oldQuote, newAuthor);
+    futureUserAlbum = DBUserCollection.getUserCollection(collectionName);
+    notifyListeners();
+  }
+
+  void delUserCollectionQuote(String collectionName, String quote) async {
+    await DBUserCollection.delUserCollectionQuote(collectionName, quote);
+    futureUserAlbum = DBUserCollection.getUserCollection(collectionName);
+    notifyListeners();
+  }
+
+  void switchFavUserCollection(String collectionName, Quote quote) async {
+    await DBUserCollection.switchFavUserCollection(collectionName, quote);
+    futureFav = DBUserCollection.getFavQuotesUserCollection();
+    futureUserAlbum = DBUserCollection.getUserCollection(collectionName);
     notifyListeners();
   }
 }

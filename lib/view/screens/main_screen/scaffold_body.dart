@@ -8,6 +8,7 @@ import '../../../model/data/db_quotes.dart';
 import '../../../model/models.dart';
 
 import '../../../view_model/provider.dart';
+import '../../widgets/edit_pop_up.dart';
 
 class ScaffoldBody extends StatefulWidget {
   const ScaffoldBody({
@@ -38,6 +39,22 @@ class _ScaffoldBodyState extends State<ScaffoldBody> {
           return ListView.builder(
               itemCount: snapshot.data?.length,
               itemBuilder: (context, index) => QuoteTile(
+                  onDoubleTap: () => showDialog(
+                      context: context,
+                      builder: (context) => EditPopUpCard(
+                            onTap: () {
+                              //update quote
+                              context
+                                  .read<Model>()
+                                  .updateQuote(snapshot.data![index]);
+                              //Clear controllers
+                              context.read<Model>().quoteController.clear();
+                              context.read<Model>().authorController.clear();
+                              Navigator.pop(context);
+                            },
+                            author: snapshot.data?[index].author ?? "",
+                            quote: snapshot.data?[index].quote ?? "",
+                          )),
                   favIcon: (snapshot.data?[index].isFav == 0)
                       ? const Icon(
                           color: Colors.white70, Icons.favorite_outline_rounded)

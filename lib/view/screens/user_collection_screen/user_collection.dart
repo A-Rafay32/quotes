@@ -8,6 +8,7 @@ import '../../../model/models.dart';
 import '../../../res/constants.dart';
 import '../../../view_model/provider.dart';
 import '../../widgets/add_button.dart';
+import '../../widgets/edit_pop_up.dart';
 import '../../widgets/insert_text.dart';
 import '../../widgets/quote_card.dart';
 import '../../widgets/snackbar.dart';
@@ -20,10 +21,19 @@ class UserCollectionScreen extends StatefulWidget {
 }
 
 class _UserCollectionScreenState extends State<UserCollectionScreen> {
+  void test() async {
+    List<Quote> data =
+        await DBUserCollection.getUserCollection(widget.collectionName);
+    for (int i = 0; i < data.length; ++i) {
+      print(data[i].toMap());
+    }
+  }
+
   @override
   void initState() {
     Provider.of<Model>(context, listen: false).futureUserAlbum =
         DBUserCollection.getUserCollection(widget.collectionName);
+    test();
     super.initState();
   }
 
@@ -55,13 +65,54 @@ class _UserCollectionScreenState extends State<UserCollectionScreen> {
             return ListView.builder(
                 itemCount: snapshot.data?.length,
                 itemBuilder: (context, index) => QuoteTile(
+                    onDoubleTap: () => showDialog(
+                        context: context,
+                        builder: (context) => EditPopUpCard(
+                              onTap: () {
+                                //update quote
+                                context.read<Model>().updateUserCollectionQuote(
+                                      oldQuote:
+                                          snapshot.data?[index].quote ?? "",
+                                      collectionName: widget.collectionName,
+                                      newAuthor: context
+                                              .read<Model>()
+                                              .authorController
+                                              .text
+                                              .isNotEmpty
+                                          ? context
+                                              .read<Model>()
+                                              .authorController
+                                              .text
+                                              .trim()
+                                          : snapshot.data?[index].author ?? "",
+                                      newQuote: context
+                                              .read<Model>()
+                                              .quoteController
+                                              .text
+                                              .isNotEmpty
+                                          ? context
+                                              .read<Model>()
+                                              .quoteController
+                                              .text
+                                              .trim()
+                                          : snapshot.data?[index].quote ?? "",
+                                    );
+                                //Clear controllers
+                                context.read<Model>().quoteController.clear();
+                                context.read<Model>().authorController.clear();
+                                Navigator.pop(context);
+                              },
+                              author: snapshot.data?[index].author ?? "",
+                              quote: snapshot.data?[index].quote ?? "",
+                            )),
                     favIcon: (snapshot.data?[index].isFav == 0)
                         ? const Icon(
                             color: Colors.white70,
                             Icons.favorite_outline_rounded)
                         : const Icon(
                             color: Colors.white70, Icons.favorite_rounded),
-                    favorites: () => model.switchFavourites(
+                    favorites: () => model.switchFavUserCollection(
+                          widget.collectionName,
                           snapshot.data?[index] ??
                               Quote(
                                   // id: 0,
@@ -84,14 +135,15 @@ class _UserCollectionScreenState extends State<UserCollectionScreen> {
                     delete: () {
                       // add the copy of quote in recentyDel table
                       DBQuotes.db?.insert("recentlyDel", {
-                        "collectionName": snapshot.data![index].collectionName,
+                        "collectionName": "",
                         "quote": snapshot.data![index].quote,
                         "author": snapshot.data![index].author,
                         "isFav": snapshot.data![index].isFav,
                       });
 
                       // delete the quote from everywhere
-                      model.delQuote(snapshot.data?[index]);
+                      model.delUserCollectionQuote(widget.collectionName,
+                          snapshot.data?[index].quote ?? "");
                     },
                     quoteObj: snapshot.data?[index] ??
                         Quote(
@@ -109,8 +161,8 @@ class _UserCollectionScreenState extends State<UserCollectionScreen> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.symmetric(vertical: 30.0),
         child: AddButton(
-          onPressed: () async {
-            await DBUserCollection.addQuoteToUserCollection(
+          onPressed: () {
+            context.read<Model>().addQuoteToUserCollection(
                 widget.collectionName,
                 Quote(
                     author: context.read<Model>().authorController.text.trim(),

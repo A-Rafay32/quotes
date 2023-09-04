@@ -7,6 +7,7 @@ import 'package:quotes/res/constants.dart';
 import 'package:quotes/view/widgets/quote_card.dart';
 
 import '../../../view_model/provider.dart';
+import '../../widgets/edit_pop_up.dart';
 
 class AuthorCollectionScreen extends StatefulWidget {
   AuthorCollectionScreen({super.key, required this.collectionName});
@@ -48,6 +49,22 @@ class _AuthorCollectionScreenState extends State<AuthorCollectionScreen> {
             return ListView.builder(
                 itemCount: snapshot.data?.length,
                 itemBuilder: (context, index) => QuoteTile(
+                    onDoubleTap: () => showDialog(
+                        context: context,
+                        builder: (context) => EditPopUpCard(
+                              onTap: () {
+                                //update quote
+                                context
+                                    .read<Model>()
+                                    .updateQuote(snapshot.data![index]);
+                                //Clear controllers
+                                context.read<Model>().quoteController.clear();
+                                context.read<Model>().authorController.clear();
+                                Navigator.pop(context);
+                              },
+                              author: snapshot.data?[index].author ?? "",
+                              quote: snapshot.data?[index].quote ?? "",
+                            )),
                     favIcon: (snapshot.data?[index].isFav == 0)
                         ? const Icon(
                             color: Colors.white70,

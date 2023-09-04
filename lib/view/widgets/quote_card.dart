@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 import '../../model/models.dart';
 import '../../res/constants.dart';
-import 'edit_pop_up.dart';
 
 class QuoteTile extends StatelessWidget {
   QuoteTile(
@@ -14,6 +13,7 @@ class QuoteTile extends StatelessWidget {
       required this.copy,
       required this.favorites,
       required this.favIcon,
+      required this.onDoubleTap,
 
       // required this.share,
       super.key});
@@ -25,19 +25,14 @@ class QuoteTile extends StatelessWidget {
   void Function()? delete;
   void Function()? favorites;
   void Function()? copy;
+  void Function()? onDoubleTap;
   Icon favIcon;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
         onLongPress: () {},
-        onDoubleTap: () => showDialog(
-          
-            context: context,
-            builder: (context) => EditPopUpCard(
-                author: quoteObj.author,
-                quote: quoteObj.quote,
-                quoteObj: quoteObj)),
+        onDoubleTap: onDoubleTap,
         child: Container(
           margin: const EdgeInsets.all(8),
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),

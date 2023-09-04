@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../model/models.dart';
 import '../../res/constants.dart';
 import '../../view_model/provider.dart';
 
 class EditPopUpCard extends StatelessWidget {
   EditPopUpCard(
       {required this.quote,
-      required this.quoteObj,
       required this.author,
+      required this.onTap,
       super.key});
 
   String quote;
   String author;
-  Quote quoteObj;
+
+  void Function() onTap;
   @override
   Widget build(BuildContext context) {
     Provider.of<Model>(context, listen: false).quoteController.text = quote;
@@ -55,21 +55,7 @@ class EditPopUpCard extends StatelessWidget {
             ),
           ),
           InkWell(
-              onTap: () {
-                //update quote
-                Provider.of<Model>(context, listen: false)
-                    .updateQuote(quoteObj);
-                //Clear controllers
-                Provider.of<Model>(context, listen: false)
-                    .quoteController
-                    .clear();
-
-                Provider.of<Model>(context, listen: false)
-                    .authorController
-                    .clear();
-
-                Navigator.pop(context);
-              },
+              onTap: onTap,
               child: const Icon(color: Colors.white70, size: 28, Icons.done)),
         ],
       ),

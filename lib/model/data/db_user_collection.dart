@@ -7,7 +7,6 @@ class DBUserCollection {
   static Database? db = DBQuotes.db;
 
   static Future<List<UserCollection>> getUserCollections() async {
-    // db = await openDB();
     List<Map<String, dynamic>> data = await db!.query("UserCollections");
     return List.generate(
         data.length,
@@ -37,9 +36,10 @@ class DBUserCollection {
   static Future<List<Quote>> getUserCollection(String collectionName) async {
     List<Map<String, dynamic>> result = await db!.rawQuery("""
       SELECT * FROM $collectionName 
-      JOIN UserCollections ON $collectionName.UserCollectionName = UserCollections.collectionName 
+      
 """);
-    print(result);
+// JOIN UserCollections ON $collectionName.UserCollectionName = UserCollections.collectionName
+    // print(result);
     return List.generate(
         result.length ?? 0,
         (index) => Quote(
@@ -47,7 +47,7 @@ class DBUserCollection {
             author: result[index]["author"],
             quote: result[index]["quote"],
             isFav: result[index]["isFav"],
-            collectionName: result[index]["collectionName"]));
+            collectionName: ""));
   }
 
   static Future<int> addQuoteToUserCollection(
@@ -55,5 +55,74 @@ class DBUserCollection {
     int result = await db!.database.insert(collectionName,
         {"author": quote.author, "quote": quote.quote, "isFav": quote.isFav});
     return result;
+  }
+
+  static Future<int> updateUserCollectionQuote(
+    collectionName,
+    String newQuote,
+    String oldQuote,
+    String newAuthor,
+  ) async {
+    int result = await db!.database.update(
+        collectionName, {"quote": newQuote, "author": newAuthor},
+        where: "quote=?",
+        whereArgs: [(oldQuote)],
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    return result;
+  }
+
+  static Future<int> delUserCollectionQuote(
+    collectionName,
+    String quote,
+  ) async {
+    int result = await db!.database
+        .delete(collectionName, where: "quote=?", whereArgs: [quote]);
+
+    return result;
+  }
+
+  static Future<List<Quote>> getFavQuotesUserCollection() async {
+    //fetches all the data from favTable
+    final List<Map<String, dynamic>>? maps = await db?.rawQuery("""
+        SELECT * FROM userCollections
+        JOIN userCollections ON userCollections.collectionName = userCollections.collectionName
+        WHERE isFav = 1""");
+
+    print(maps);
+    //arrange all the data in map to quote and return it all
+    return List.generate(maps?.length ?? 0, (index) {
+      return Quote(
+          // id: maps?[index]["quoteID"],
+          isFav: maps?[index]["isFav"],
+          collectionName: "",
+          author: maps?[index]["author"],
+          quote: maps?[index]["quote"]);
+    });
+  }
+
+  static void addToFavUserCollection(String collectionName, Quote quote) async {
+    await db?.update(collectionName, {"isFav": 1},
+        where: "quote=?", whereArgs: [quote.quote]);
+
+    print('Added to favorites');
+    return null;
+  }
+
+  static void removeFavUserCollection(
+      String collectionName, Quote quote) async {
+    await db?.update(collectionName, {"isFav": 0},
+        where: "quote=?", whereArgs: [quote.quote]);
+  }
+
+  static Future switchFavUserCollection(
+      String collectionName, Quote quote) async {
+    // db = await openDB();
+    if (quote.isFav == 1) {
+      removeFavUserCollection(collectionName, quote);
+      print("removed from favorites");
+    } else {
+      addToFavUserCollection(collectionName, quote);
+      print("added to favorites");
+    }
   }
 }

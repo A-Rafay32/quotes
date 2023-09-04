@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:quotes/model/data/db_user_collection.dart';
 
 import 'package:quotes/view/widgets/add_button.dart';
 import 'package:quotes/view/widgets/edit_pop_up.dart';
@@ -21,11 +22,24 @@ class FavoritesScreen extends StatefulWidget {
 }
 
 class _FavoritesScreenState extends State<FavoritesScreen> {
+  // void getFavQuotes() async {
+  //   List<Quote> favQuotes = await DBFavorites.getFavQuotes();
+  //   List<Quote> favUserCol = await DBUserCollection.getFavQuotesUserCollection();
+  //   favQuotes.add()
+  // }
+  void test() async {
+    List<Quote> favUserCol =
+        await DBUserCollection.getFavQuotesUserCollection();
+    for (int i = 0; i < favUserCol.length; ++i) {
+      print(favUserCol[i].toMap());
+    }
+  }
+
   @override
   void initState() {
     Provider.of<Model>(context, listen: false).futureFav =
         DBFavorites.getFavQuotes();
-
+    // test();
     super.initState();
   }
 
@@ -57,17 +71,43 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       onDoubleTap: () => Navigator.of(context)
                           .push(HeroDialogRoute(builder: (context) {
                         return EditPopUpCard(
-                            author: snapshot.data?[index].author ?? "",
-                            quote: snapshot.data?[index].quote ?? "",
-                            quoteObj: snapshot.data?[index] ??
-                                Quote(
-                                    // id: 0,
-                                    author: "",
-                                    quote: "",
-                                    isFav: 0,
-                                    collectionName: ""));
+                          onTap: () {
+                            //update quote
+                            context
+                                .read<Model>()
+                                .updateQuote(snapshot.data![index]);
+                            //Clear controllers
+                            context.read<Model>().quoteController.clear();
+                            context.read<Model>().authorController.clear();
+                            Navigator.pop(context);
+                          },
+                          author: snapshot.data?[index].author ?? "",
+                          quote: snapshot.data?[index].quote ?? "",
+                        );
                       })),
                       child: QuoteTile(
+                          onDoubleTap: () => showDialog(
+                              context: context,
+                              builder: (context) => EditPopUpCard(
+                                    onTap: () {
+                                      //update quote
+                                      context
+                                          .read<Model>()
+                                          .updateQuote(snapshot.data![index]);
+                                      //Clear controllers
+                                      context
+                                          .read<Model>()
+                                          .quoteController
+                                          .clear();
+                                      context
+                                          .read<Model>()
+                                          .authorController
+                                          .clear();
+                                      Navigator.pop(context);
+                                    },
+                                    author: snapshot.data?[index].author ?? "",
+                                    quote: snapshot.data?[index].quote ?? "",
+                                  )),
                           favIcon: (snapshot.data?[index].isFav == 0)
                               ? const Icon(
                                   color: Colors.white70,
