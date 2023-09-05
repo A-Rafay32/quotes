@@ -57,7 +57,7 @@ class DBFavorites {
     print(await db?.rawQuery("SELECT * FROM quoteTable"));
   }
 
-  static Future<List<Quote>> getFavQuotes() async {
+  static Future<List<Map<String, dynamic>>?> getFavQuotes() async {
     // db = await openDB();
     //fetches all the data from favTable
     final List<Map<String, dynamic>>? maps = await db?.rawQuery("""
@@ -65,16 +65,17 @@ class DBFavorites {
         JOIN favTable ON quoteTable.quote = favTable.favQuote
         WHERE quoteTable.quote = favTable.favQuote""");
     print(maps?.length);
+    return maps;
     // print(maps);
     //arrange all the data in map to quote and return it all
-    return List.generate(maps?.length ?? 0, (index) {
-      return Quote(
-          // id: maps?[index]["quoteID"],
-          isFav: maps?[index]["isFav"],
-          collectionName: maps?[index]["collectionName"],
-          author: maps?[index]["author"],
-          quote: maps?[index]["quote"]);
-    });
+    // return List.generate(maps?.length ?? 0, (index) {
+    //   return Quote(
+    //       // id: maps?[index]["quoteID"],
+    //       isFav: maps?[index]["isFav"],
+    //       collectionName: maps?[index]["collectionName"],
+    //       author: maps?[index]["author"],
+    //       quote: maps?[index]["quote"]);
+    // });
   }
 
   static Future delFavQuotes(Quote quote) async {

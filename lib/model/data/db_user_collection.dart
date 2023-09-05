@@ -52,8 +52,12 @@ class DBUserCollection {
 
   static Future<int> addQuoteToUserCollection(
       String collectionName, Quote quote) async {
-    int result = await db!.database.insert(collectionName,
-        {"author": quote.author, "quote": quote.quote, "isFav": quote.isFav});
+    int result = await db!.database.insert(collectionName, {
+      "author": quote.author,
+      "quote": quote.quote,
+      "isFav": quote.isFav,
+      "UserCollectionName": collectionName
+    });
     return result;
   }
 
@@ -81,23 +85,37 @@ class DBUserCollection {
     return result;
   }
 
-  static Future<List<Quote>> getFavQuotesUserCollection() async {
-    //fetches all the data from favTable
-    final List<Map<String, dynamic>>? maps = await db?.rawQuery("""
-        SELECT * FROM userCollections
-        JOIN userCollections ON userCollections.collectionName = userCollections.collectionName
-        WHERE isFav = 1""");
+  static Future<List<Map<String, dynamic>>> getFavQuotesUserCollection() async {
+    final List<UserCollection> userCollectionList = await getUserCollections();
+    List<Map<String, dynamic>> data = [];
+    for (int i = 0; i < userCollectionList.length; ++i) {
+      List<Map<String, dynamic>>? temp;
+      temp = await db?.rawQuery("""
+        SELECT * FROM UserCollections
+        JOIN ${userCollectionList[i].collectionName} ON  UserCollections.collectionName = ${userCollectionList[i].collectionName}.UserCollectionName
+        WHERE ${userCollectionList[i].collectionName}.isFav=1
+""");
+// WHERE  userCollections.collectionName = ${userCollectionList[i].collectionName}.UserCollectionName
+      data.add(temp![i]);
+    }
+    print(data);
+    return data;
 
-    print(maps);
+    // final List<Map<String, dynamic>>? maps = await db?.rawQuery("""
+    //     SELECT * FROM userCollections
+    //     JOIN userCollections ON userCollections.collectionName = userCollections.collectionName
+    //     WHERE isFav = 1""");
+
+    // print(maps);
     //arrange all the data in map to quote and return it all
-    return List.generate(maps?.length ?? 0, (index) {
-      return Quote(
-          // id: maps?[index]["quoteID"],
-          isFav: maps?[index]["isFav"],
-          collectionName: "",
-          author: maps?[index]["author"],
-          quote: maps?[index]["quote"]);
-    });
+    // return List.generate(data?.length ?? 0, (index) {
+    //   return Quote(
+    //       // id: maps?[index]["quoteID"],
+    //       isFav: data?[index]["isFav"],
+    //       collectionName: "",
+    //       author: maps?[index]["author"],
+    //       quote: maps?[index]["quote"]);
+    // });
   }
 
   static void addToFavUserCollection(String collectionName, Quote quote) async {

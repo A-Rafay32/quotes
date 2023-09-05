@@ -22,24 +22,31 @@ class FavoritesScreen extends StatefulWidget {
 }
 
 class _FavoritesScreenState extends State<FavoritesScreen> {
-  // void getFavQuotes() async {
-  //   List<Quote> favQuotes = await DBFavorites.getFavQuotes();
-  //   List<Quote> favUserCol = await DBUserCollection.getFavQuotesUserCollection();
-  //   favQuotes.add()
-  // }
-  void test() async {
-    List<Quote> favUserCol =
+
+  void getFavQuotes() async {
+    context.read<Model>().favQuotesMap = await DBFavorites.getFavQuotes();
+    List<Map<String, dynamic>> favUserCol =
         await DBUserCollection.getFavQuotesUserCollection();
+    print(favUserCol);
     for (int i = 0; i < favUserCol.length; ++i) {
-      print(favUserCol[i].toMap());
+      context.read<Model>().favQuotesMap!.add(favUserCol[i]);
     }
   }
+  
+  // void test() async {
+  //   List<Map> favUserCol =
+  //       await DBUserCollection.getFavQuotesUserCollection();
+  //   for (int i = 0; i < favUserCol.length; ++i) {
+  //     print(favUserCol[i].toMap());
+  //   }
+  // }
 
   @override
   void initState() {
-    Provider.of<Model>(context, listen: false).futureFav =
-        DBFavorites.getFavQuotes();
-    // test();
+    // Provider.of<Model>(context, listen: false).futureFav =
+    //     DBFavorites.getFavQuotes();
+
+    getFavQuotes();
     super.initState();
   }
 
@@ -62,88 +69,82 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       ),
       // (futureA.isEmpty) ? Consumer : Wow such Empty
       body: Consumer<Model>(builder: (context, model, child) {
-        return FutureBuilder(
-          future: model.futureFav,
-          builder: (context, snapshot) {
-            return ListView.builder(
-                itemCount: snapshot.data?.length ?? 0,
-                itemBuilder: (context, index) => GestureDetector(
-                      onDoubleTap: () => Navigator.of(context)
-                          .push(HeroDialogRoute(builder: (context) {
-                        return EditPopUpCard(
-                          onTap: () {
-                            //update quote
-                            context
-                                .read<Model>()
-                                .updateQuote(snapshot.data![index]);
-                            //Clear controllers
-                            context.read<Model>().quoteController.clear();
-                            context.read<Model>().authorController.clear();
-                            Navigator.pop(context);
-                          },
-                          author: snapshot.data?[index].author ?? "",
-                          quote: snapshot.data?[index].quote ?? "",
-                        );
-                      })),
-                      child: QuoteTile(
-                          onDoubleTap: () => showDialog(
-                              context: context,
-                              builder: (context) => EditPopUpCard(
-                                    onTap: () {
-                                      //update quote
-                                      context
-                                          .read<Model>()
-                                          .updateQuote(snapshot.data![index]);
-                                      //Clear controllers
-                                      context
-                                          .read<Model>()
-                                          .quoteController
-                                          .clear();
-                                      context
-                                          .read<Model>()
-                                          .authorController
-                                          .clear();
-                                      Navigator.pop(context);
-                                    },
-                                    author: snapshot.data?[index].author ?? "",
-                                    quote: snapshot.data?[index].quote ?? "",
-                                  )),
-                          favIcon: (snapshot.data?[index].isFav == 0)
-                              ? const Icon(
-                                  color: Colors.white70,
-                                  Icons.favorite_outline_rounded)
-                              : const Icon(
-                                  color: Colors.white70,
-                                  Icons.favorite_rounded),
-                          copy: () async {
-                            String text =
-                                "${snapshot.data![index].quote}   ~${snapshot.data![index].author}";
-                            await Clipboard.setData(ClipboardData(text: text));
-                            // copied successfully
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: SnackBarContent(text: text),
-                              duration: const Duration(seconds: 2),
-                              elevation: 2,
-                            ));
+        return ListView.builder(
+            itemCount: model.favQuotesMap?.length,
+            itemBuilder: (context, index) => GestureDetector(
+                  onDoubleTap: () => Navigator.of(context)
+                      .push(HeroDialogRoute(builder: (context) {
+                    return EditPopUpCard(
+                      onTap: () {
+                        //update quote
+                        // context
+                        //     .read<Model>()
+                        //     .updateQuote(model.favQuotesMap?[index].);
+                        //Clear controllers
+                        context.read<Model>().quoteController.clear();
+                        context.read<Model>().authorController.clear();
+                        Navigator.pop(context);
+                      },
+                      author: model.favQuotesMap?[index]["author"] ?? "",
+                      quote: model.favQuotesMap?[index]["quote"] ?? "",
+                    );
+                  })),
+                  child: QuoteTile(
+                      onDoubleTap: () => showDialog(
+                          context: context,
+                          builder: (context) => EditPopUpCard(
+                                onTap: () {
+                                  //update quote
+                                  // context
+                                  //     .read<Model>()
+                                  //     .updateQuote(model.favQuotesMap?[index]);
+                                  //Clear controllers
+                                  context.read<Model>().quoteController.clear();
+                                  context
+                                      .read<Model>()
+                                      .authorController
+                                      .clear();
+                                  Navigator.pop(context);
+                                },
+                                author:
+                                    model.favQuotesMap?[index]["author"] ?? "",
+                                quote:
+                                    model.favQuotesMap?[index]["quote"] ?? "",
+                              )),
+                      favIcon: (model.favQuotesMap?[index]["isFav"] == 0)
+                          ? const Icon(
+                              color: Colors.white70,
+                              Icons.favorite_outline_rounded)
+                          : const Icon(
+                              color: Colors.white70, Icons.favorite_rounded),
+                      copy: () async {
+                        String text =
+                            "${model.favQuotesMap?[index]["quote"]}   ~${model.favQuotesMap?[index]["author"]}";
+                        await Clipboard.setData(ClipboardData(text: text));
+                        // copied successfully
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: SnackBarContent(text: text),
+                          duration: const Duration(seconds: 2),
+                          elevation: 2,
+                        ));
 
-                            // copied successfully
-                          },
-                          favorites: () =>
-                              model.switchFavourites(snapshot.data?[index]),
-                          delete: () =>
-                              model.delFavQuote(snapshot.data?[index]),
-                          quoteObj: snapshot.data?[index] ??
-                              Quote(
-                                  // id: 0,
-                                  author: "",
-                                  quote: "",
-                                  isFav: 0,
-                                  collectionName: ""),
-                          quote: snapshot.data?[index].quote ?? " ",
-                          author: snapshot.data?[index].author ?? ""),
-                    ));
-          },
-        );
+                        // copied successfully
+                      },
+                      favorites: () {},
+                      // model.switchFavourites(model.favQuotesMap?[index]),
+                      delete: () {},
+                      //  model.delFavQuote(snapshot.data?[index]),
+                      quoteObj:
+                          // snapshot.data?[index] ??
+                          Quote(
+                              // id: 0,
+                              author: "",
+                              quote: "",
+                              isFav: 0,
+                              collectionName: ""),
+                      quote: model.favQuotesMap?[index]["quote"] ?? " ",
+                      author: model.favQuotesMap?[index]["author"] ?? ""),
+                ));
       }),
     );
   }

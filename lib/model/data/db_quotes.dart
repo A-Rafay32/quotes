@@ -1,3 +1,4 @@
+import 'package:quotes/model/data/db_fav.dart';
 import 'package:quotes/model/models.dart';
 import 'package:sqflite/sqflite.dart';
 import "package:path/path.dart";
@@ -109,15 +110,27 @@ class DBQuotes {
   static Future<int?> updateQuoteAuthor(Quote quote, String author) async {
     int? result = await db?.update(
         "quoteTable", {"author": author, "collectionName": author},
-        where: "quote =?  ",
+        where: "quote=?  ",
         whereArgs: [(quote.quote)],
         conflictAlgorithm: ConflictAlgorithm.replace);
+    Quote q = Quote(
+        author: author,
+        quote: quote.quote,
+        isFav: quote.isFav,
+        collectionName: author);
+    await DBFavorites.addToFav(q);
     return result;
   }
 
   static Future<int?> updateQuoteContent(Quote quote, String Newquote) async {
     int? result = await db?.update("quoteTable", {"quote": Newquote},
         where: "quote =?  ", whereArgs: [(quote.quote)]);
+    Quote q = Quote(
+        author: quote.author,
+        quote: Newquote,
+        isFav: quote.isFav,
+        collectionName: quote.author);
+    await DBFavorites.addToFav(q);
     return result;
   }
 

@@ -16,6 +16,7 @@ class Model extends ChangeNotifier {
   Future<List<AuthorCollection>>? futureC;
   Future<List<UserCollection>>? futureUC;
   Future<List<Quote>>? futureUserAlbum;
+  List<Map<String, dynamic>>? favQuotesMap;
 
   bool isSelected = false;
   Color borderColor = Colors.white70;
@@ -34,7 +35,7 @@ class Model extends ChangeNotifier {
     DBQuotes.openDB();
     futureC = DBAuthorCollection.getAuthorCollection();
     futureQ = DBQuotes.getQuotes();
-    futureFav = DBFavorites.getFavQuotes();
+    favQuotesMap = await DBFavorites.getFavQuotes();
     notifyListeners();
   }
 
@@ -144,7 +145,7 @@ class Model extends ChangeNotifier {
     //update futures
     futureC = DBAuthorCollection.getAuthorCollection();
     futureQ = DBQuotes.getQuotes();
-    futureFav = DBFavorites.getFavQuotes();
+    favQuotesMap = await DBFavorites.getFavQuotes();
     futureA = DBAuthorCollection.getQuotesOfAuthor(quote?.author ?? "");
     //update Id
     setId();
@@ -160,7 +161,7 @@ class Model extends ChangeNotifier {
     //update futures
     futureC = DBAuthorCollection.getAuthorCollection();
     // print(await DBHelper.db?.query("collectionTable"));
-
+    favQuotesMap = await DBFavorites.getFavQuotes();
     futureQ = DBQuotes.getQuotes();
     // print(await futureC);
     futureA =
@@ -182,7 +183,7 @@ class Model extends ChangeNotifier {
     // Update futures
     futureC = DBAuthorCollection.getAuthorCollection();
     futureQ = DBQuotes.getQuotes();
-    futureFav = DBFavorites.getFavQuotes();
+    favQuotesMap = await DBFavorites.getFavQuotes();
   }
 
   void delCollection(AuthorCollection? collection) async {
@@ -193,7 +194,7 @@ class Model extends ChangeNotifier {
     //update futures
     futureQ = DBQuotes.getQuotes();
     futureC = DBAuthorCollection.getAuthorCollection();
-    futureFav = DBFavorites.getFavQuotes();
+    favQuotesMap = await DBFavorites.getFavQuotes();
     futureA = DBAuthorCollection.getQuotesOfAuthor(collection?.name ?? "");
 
     notifyListeners();
@@ -222,7 +223,7 @@ class Model extends ChangeNotifier {
     //update futures
     futureC = DBAuthorCollection.getAuthorCollection();
     futureQ = DBQuotes.getQuotes();
-    futureFav = DBFavorites.getFavQuotes();
+    favQuotesMap = await DBFavorites.getFavQuotes();
     futureA = DBAuthorCollection.getQuotesOfAuthor(quote?.author ?? "");
 
     notifyListeners();
@@ -283,7 +284,7 @@ class Model extends ChangeNotifier {
 
   void switchFavUserCollection(String collectionName, Quote quote) async {
     await DBUserCollection.switchFavUserCollection(collectionName, quote);
-    futureFav = DBUserCollection.getFavQuotesUserCollection();
+    // futureFav = DBUse  rCollection.getFavQuotesUserCollection();
     futureUserAlbum = DBUserCollection.getUserCollection(collectionName);
     notifyListeners();
   }

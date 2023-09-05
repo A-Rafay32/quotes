@@ -7,6 +7,7 @@ import 'package:quotes/view/screens/user_collection_screen/recently_deleted.dart
 import 'package:quotes/view/screens/user_collection_screen/user_collection.dart';
 import 'package:quotes/view/widgets/collection_card.dart';
 
+import '../../../model/models.dart';
 import '../../../res/constants.dart';
 import '../../../view_model/provider.dart';
 
@@ -43,7 +44,12 @@ class _YourCollectionScreenState extends State<YourCollectionScreen> {
             actions: [
               if (model.isSelected)
                 IconButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      List<UserCollection> list =
+                          await DBUserCollection.getUserCollections();
+                      for (int i = 0; i < list.length; ++i) {
+                        DBQuotes.db!.database.delete(list[i].collectionName);
+                      }
                       DBQuotes.db!.database.delete("UserCollections");
                     },
                     icon: const Icon(
@@ -64,7 +70,11 @@ class _YourCollectionScreenState extends State<YourCollectionScreen> {
       ),
       body: GestureDetector(
         onTap: () {
-          Provider.of<Model>(context, listen: false).unSelectAlbum();
+          if (context.read<Model>().isSelected == false) {
+            return;
+          } else {
+            Provider.of<Model>(context, listen: false).unSelectAlbum();
+          }
         },
         child: Column(
           children: [
@@ -97,11 +107,12 @@ class _YourCollectionScreenState extends State<YourCollectionScreen> {
                                             ""),
                               ));
                             },
-                            onLongPress: () {
-                              Provider.of<Model>(context, listen: false)
-                                  .unSelectAlbum();
-                            },
+                            // onLongPress: () {
+                            //   Provider.of<Model>(context, listen: false)
+                            //       .unSelectAlbum();
+                            // },
                             child: CollectionCard(
+
                                 borderColor: model.isSelected
                                     ? PopupCardColor
                                     : Colors.white70,
