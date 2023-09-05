@@ -7,7 +7,8 @@ class DBUserCollection {
   static Database? db = DBQuotes.db;
 
   static Future<List<UserCollection>> getUserCollections() async {
-    List<Map<String, dynamic>> data = await db!.query("UserCollections");
+    List<Map<String, dynamic>> data =
+        await db!.query("UserCollections", orderBy: "rowid DESC");
     return List.generate(
         data.length,
         (index) => UserCollection(
@@ -34,10 +35,8 @@ class DBUserCollection {
   }
 
   static Future<List<Quote>> getUserCollection(String collectionName) async {
-    List<Map<String, dynamic>> result = await db!.rawQuery("""
-      SELECT * FROM $collectionName 
-      
-""");
+    List<Map<String, dynamic>> result =
+        await db!.query(collectionName, orderBy: "rowid DESC");
 // JOIN UserCollections ON $collectionName.UserCollectionName = UserCollections.collectionName
     // print(result);
     return List.generate(

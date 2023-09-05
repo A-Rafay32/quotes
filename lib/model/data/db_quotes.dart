@@ -81,7 +81,8 @@ class DBQuotes {
 
   static Future<List<Quote>> getQuotes() async {
     //fetches all the data from our table
-    final List<Map<String, dynamic>>? maps = await db?.query("quoteTable");
+    final List<Map<String, dynamic>>? maps =
+        await db?.query("quoteTable", orderBy: "rowid DESC");
     //arrange all the data in map to quote and return it all
     return List.generate(maps?.length ?? 0, (index) {
       return Quote(
@@ -95,7 +96,8 @@ class DBQuotes {
 
   static Future<List<Quote>> getQuotesFrom(String tableName) async {
     //fetches all the data from our table
-    final List<Map<String, dynamic>>? maps = await db?.query(tableName);
+    final List<Map<String, dynamic>>? maps =
+        await db?.query(tableName, orderBy: "rowid DESC");
     //arrange all the data in map to quote and return it all
     return List.generate(maps?.length ?? 0, (index) {
       return Quote(
@@ -114,25 +116,30 @@ class DBQuotes {
         where: "quote =?  ",
         whereArgs: [(quote.quote)],
         conflictAlgorithm: ConflictAlgorithm.replace);
-    Quote q = Quote(
-        author: author,
-        quote: quote.quote,
-        isFav: quote.isFav,
-        collectionName: author);
-    await DBFavorites.addToFav(q);
+    if (quote.isFav == 1) {
+      Quote q = Quote(
+          author: author,
+          quote: quote.quote,
+          isFav: quote.isFav,
+          collectionName: author);
+      await DBFavorites.addToFav(q);
+    }
+
     return result;
   }
 
   static Future<int?> updateQuoteContent(Quote quote, String Newquote) async {
     int? result = await db?.update("quoteTable", {"quote": Newquote},
         where: "quote =?  ", whereArgs: [(quote.quote)]);
+    if (quote.isFav == 1) {
+      Quote q = Quote(
+          author: quote.author,
+          quote: Newquote,
+          isFav: quote.isFav,
+          collectionName: quote.author);
+      await DBFavorites.addToFav(q);
+    }
 
-    Quote q = Quote(
-        author: quote.author,
-        quote: Newquote,
-        isFav: quote.isFav,
-        collectionName: quote.author);
-    await DBFavorites.addToFav(q);
     return result;
   }
 

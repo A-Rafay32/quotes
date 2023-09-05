@@ -18,7 +18,8 @@ class DBAuthorCollection {
   //read
   static Future<List<AuthorCollection>> getAuthorCollection() async {
     //fetches all the data from our table
-    final List<Map<String, dynamic>>? maps = await db?.query("collectionTable");
+    final List<Map<String, dynamic>>? maps =
+        await db?.query("collectionTable", orderBy: "rowid DESC");
 
     //arrange all the data in map to quote and return it all
     return List.generate(maps?.length ?? 0, (index) {
