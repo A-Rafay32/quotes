@@ -8,7 +8,7 @@ A basic Quote App to save your quotes, built on Flutter and SQLite
 https://github.com/A-Rafay32/quotes/assets/113136294/33a007f6-b2a1-48c4-95c6-69594007b438
 
 ### Screens
-![](https://github.com/A-Rafay32/quotes/assets/113136294/17c54c05-e83f-48a0-9751-deac31827e1d | 150X60 )
+![](https://github.com/A-Rafay32/quotes/assets/113136294/17c54c05-e83f-48a0-9751-deac31827e1d | =150x60 )
 
 
 
