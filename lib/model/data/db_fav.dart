@@ -64,8 +64,8 @@ class DBFavorites {
         SELECT * FROM quoteTable
         JOIN favTable ON quoteTable.quote = favTable.favQuote
         WHERE quoteTable.quote = favTable.favQuote""");
-    print(maps?.length);
-    // print(maps);
+    
+    print(maps);
     //arrange all the data in map to quote and return it all
     return List.generate(maps?.length ?? 0, (index) {
       return Quote(

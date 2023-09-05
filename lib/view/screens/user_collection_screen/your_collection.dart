@@ -36,88 +36,57 @@ class _YourCollectionScreenState extends State<YourCollectionScreen> {
     double h = MediaQuery.sizeOf(context).height;
     double w = MediaQuery.sizeOf(context).width;
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(64),
-        child: Consumer<Model>(builder: (context, model, child) {
-          return AppBar(
-            actions: [
-              if (model.isSelected)
-                IconButton(
-                    onPressed: () {
-                      DBQuotes.db!.database.delete("UserCollections");
-                    },
-                    icon: const Icon(
-                      Icons.delete_outline_rounded,
-                      size: 29,
-                      color: Colors.white,
-                    ))
-            ],
-            centerTitle: true,
-            backgroundColor: kbackgroundColor,
-            elevation: 0,
-            title: const Text(
-              "Your Collection",
-              style: TextStyle(fontFamily: "Ramaraja", fontSize: 28),
-            ),
-          );
-        }),
-      ),
-      body: GestureDetector(
-        onTap: () {
-          Provider.of<Model>(context, listen: false).unSelectAlbum();
-        },
-        child: Column(
-          children: [
-            CreateCollection(),
-            const RecentlyDeletedWidget(),
-            const SizedBox(
-              height: 10,
-            ),
-            SizedBox(
-              height: h * 0.7,
-              width: w,
-              child: Consumer<Model>(
-                builder: (context, model, child) {
-                  return FutureBuilder(
-                    future: model.futureUC,
-                    builder: (context, snapshot) {
-                      return GridView.builder(
-                        scrollDirection: Axis.vertical,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                childAspectRatio: 2.0, crossAxisCount: 2),
-                        itemCount: snapshot.data?.length,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => UserCollectionScreen(
-                                    collectionName:
-                                        snapshot.data?[index].collectionName ??
-                                            ""),
-                              ));
-                            },
-                            onLongPress: () {
-                              Provider.of<Model>(context, listen: false)
-                                  .unSelectAlbum();
-                            },
-                            child: CollectionCard(
-                                borderColor: model.isSelected
-                                    ? PopupCardColor
-                                    : Colors.white70,
-                                borderWidth: model.isSelected ? 3 : 1,
-                                text:
-                                    snapshot.data?[index].collectionName ?? ""),
-                          );
-                        },
-                      );
-                    },
-                  );
-                },
-              ),
-            )
-          ],
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: kbackgroundColor,
+        elevation: 0,
+        title: const Text(
+          "Your Collection",
+          style: TextStyle(fontFamily: "Ramaraja", fontSize: 28),
         ),
+      ),
+      body: Column(
+        children: [
+          CreateCollection(),
+          const RecentlyDeletedWidget(),
+          const SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            height: h * 0.7,
+            width: w,
+            child: Consumer<Model>(
+              builder: (context, model, child) {
+                return FutureBuilder(
+                  future: model.futureUC,
+                  builder: (context, snapshot) {
+                    return GridView.builder(
+                      scrollDirection: Axis.vertical,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              childAspectRatio: 2.0, crossAxisCount: 2),
+                      itemCount: snapshot.data?.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => UserCollectionScreen(
+                                  collectionName:
+                                      snapshot.data?[index].collectionName ??
+                                          ""),
+                            ));
+                          },
+                          child: CollectionCard(
+                              text: snapshot.data?[index].collectionName ?? ""),
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+            ),
+          )
+        ],
       ),
     );
   }

@@ -4,12 +4,8 @@ class CollectionCard extends StatelessWidget {
   const CollectionCard({
     super.key,
     required this.text,
-    required this.borderColor,
-    required this.borderWidth,
   });
   final String text;
-  final Color borderColor;
-  final double borderWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +15,8 @@ class CollectionCard extends StatelessWidget {
       decoration: BoxDecoration(
           // color: kCardColor,
           border: Border.all(
-            width: borderWidth,
-            color: borderColor,
+            width: 1,
+            color: Colors.white70,
           ),
           borderRadius: BorderRadius.circular(20),
           boxShadow: const [

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:quotes/model/data/db_user_collection.dart';
 
 import 'package:quotes/view/widgets/add_button.dart';
 import 'package:quotes/view/widgets/edit_pop_up.dart';
@@ -22,24 +21,11 @@ class FavoritesScreen extends StatefulWidget {
 }
 
 class _FavoritesScreenState extends State<FavoritesScreen> {
-  // void getFavQuotes() async {
-  //   List<Quote> favQuotes = await DBFavorites.getFavQuotes();
-  //   List<Quote> favUserCol = await DBUserCollection.getFavQuotesUserCollection();
-  //   favQuotes.add()
-  // }
-  void test() async {
-    List<Quote> favUserCol =
-        await DBUserCollection.getFavQuotesUserCollection();
-    for (int i = 0; i < favUserCol.length; ++i) {
-      print(favUserCol[i].toMap());
-    }
-  }
-
   @override
   void initState() {
     Provider.of<Model>(context, listen: false).futureFav =
         DBFavorites.getFavQuotes();
-    // test();
+
     super.initState();
   }
 

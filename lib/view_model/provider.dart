@@ -16,6 +16,7 @@ class Model extends ChangeNotifier {
   Future<List<AuthorCollection>>? futureC;
   Future<List<UserCollection>>? futureUC;
   Future<List<Quote>>? futureUserAlbum;
+  Future<List<Quote>>? futureFavUserAlbum;
 
   bool isSelected = false;
   Color borderColor = Colors.white70;
@@ -159,13 +160,10 @@ class Model extends ChangeNotifier {
 
     //update futures
     futureC = DBAuthorCollection.getAuthorCollection();
-    // print(await DBHelper.db?.query("collectionTable"));
-
     futureQ = DBQuotes.getQuotes();
-    // print(await futureC);
     futureA =
         DBAuthorCollection.getQuotesOfAuthor(authorController.text.trim());
-    // print(await DBHelper.db?.query("quoteTable"));
+    futureFav = DBFavorites.getFavQuotes();
     notifyListeners();
   }
 
@@ -283,7 +281,13 @@ class Model extends ChangeNotifier {
 
   void switchFavUserCollection(String collectionName, Quote quote) async {
     await DBUserCollection.switchFavUserCollection(collectionName, quote);
-    futureFav = DBUserCollection.getFavQuotesUserCollection();
+    futureUserAlbum = DBUserCollection.getUserCollection(collectionName);
+    notifyListeners();
+  }
+
+  void delUserCollection(String collectionName) async {
+    await DBUserCollection.delUserCollection(collectionName);
+    futureUC = DBUserCollection.getUserCollections();
     futureUserAlbum = DBUserCollection.getUserCollection(collectionName);
     notifyListeners();
   }

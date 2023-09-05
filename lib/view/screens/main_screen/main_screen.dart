@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:quotes/res/constants.dart';
 import 'package:quotes/view/screens/fav_screen/favourites.dart';
@@ -77,7 +78,6 @@ class _MainScreenState extends State<MainScreen> {
                 },
                 icon: const Icon(Icons.favorite_outline)),
             IconButton(
-                color: IconColor,
                 onPressed: () {
                   Navigator.push(
                       context,
@@ -85,7 +85,12 @@ class _MainScreenState extends State<MainScreen> {
                         builder: (context) => const YourCollectionScreen(),
                       ));
                 },
-                icon: const Icon(Icons.format_quote_sharp)),
+                icon: SvgPicture.asset(
+                  "assets/icons/collection.svg",
+                  
+                  colorFilter:
+                      const ColorFilter.mode(Colors.white70, BlendMode.srcIn),
+                )),
           ],
         ),
       ),

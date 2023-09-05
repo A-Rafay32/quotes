@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:quotes/model/data/db_user_collection.dart';
+import 'package:quotes/view/screens/user_collection_screen/user_collection_fav.dart';
 
 import '../../../model/data/db_quotes.dart';
 import '../../../model/models.dart';
@@ -50,6 +51,49 @@ class _UserCollectionScreenState extends State<UserCollectionScreen> {
             Navigator.of(context).pop();
           },
         ),
+        actions: [
+          PopupMenuButton(
+            color: kCardColor,
+            icon: const Icon(
+              Icons.more_vert,
+              color: Colors.white,
+            ),
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                onTap: () {
+                  context
+                      .read<Model>()
+                      .delUserCollection(widget.collectionName);
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  "Delete Collection",
+                  style: TextStyle(
+                      color: Colors.white70, fontFamily: "Kanit", fontSize: 17),
+                ),
+              ),
+              PopupMenuItem(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UserCollectionFavScreen(
+                              collectionName: widget.collectionName),
+                        ));
+                  },
+                  child: const Text(
+                    "See Favorites",
+                    style: TextStyle(
+                        color: Colors.white70,
+                        fontFamily: "Kanit",
+                        fontSize: 17),
+                  ),
+                ),
+              )
+            ],
+          )
+        ],
         title: Text(widget.collectionName,
             style: const TextStyle(
                 fontSize: 28, fontFamily: "Ramaraja", color: Colors.white)),

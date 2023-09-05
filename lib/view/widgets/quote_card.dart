@@ -26,7 +26,7 @@ class QuoteTile extends StatelessWidget {
   void Function()? favorites;
   void Function()? copy;
   void Function()? onDoubleTap;
-  Icon favIcon;
+  Widget favIcon;
 
   @override
   Widget build(BuildContext context) {

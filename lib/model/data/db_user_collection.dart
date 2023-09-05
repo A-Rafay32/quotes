@@ -81,11 +81,11 @@ class DBUserCollection {
     return result;
   }
 
-  static Future<List<Quote>> getFavQuotesUserCollection() async {
+  static Future<List<Quote>> getFavQuotesUserCollection(
+      String collectionName) async {
     //fetches all the data from favTable
     final List<Map<String, dynamic>>? maps = await db?.rawQuery("""
-        SELECT * FROM userCollections
-        JOIN userCollections ON userCollections.collectionName = userCollections.collectionName
+        SELECT * FROM $collectionName 
         WHERE isFav = 1""");
 
     print(maps);
@@ -124,5 +124,11 @@ class DBUserCollection {
       addToFavUserCollection(collectionName, quote);
       print("added to favorites");
     }
+  }
+
+  static Future delUserCollection(collectionName) async {
+    await db?.delete(collectionName);
+    await db?.delete("UserCollections",
+        where: "collectionName=?", whereArgs: [collectionName]);
   }
 }
