@@ -17,8 +17,8 @@ void main() async {
   ]);
 
   // for linux
-  sqfliteFfiInit();
-  databaseFactory = databaseFactoryFfi;
+  // sqfliteFfiInit();
+  // databaseFactory = databaseFactoryFfi;
   // databaseFactory.deleteDatabase(
   //     "/home/a-rafay/Documents/flutter/quotes/.dart_tool/sqflite_common_ffi/databases/quote.db");
   // var databasepath = await getDatabasesPath();

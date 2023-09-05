@@ -81,19 +81,19 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           ),
                       itemCount: snapshot.data?.length ?? 0,
                       itemBuilder: (context, index) => ListTile(
-                            trailing: IconButton(
-                                onPressed: () => model.delAuthorCollection(
-                                    snapshot.data?[index].name ?? ""),
-                                // {
-                                //first delete all quotes
-                                // Provider.of<Model>(context, listen: false)
-                                //     .delCollection2(snapshot.data?[index].name);
-                                // then collection
+                            // trailing: IconButton(
+                            //     onPressed: () => model.delAuthorCollection(
+                            //         snapshot.data?[index].name ?? ""),
+                            //     // {
+                            //     //first delete all quotes
+                            //     // Provider.of<Model>(context, listen: false)
+                            //     //     .delCollection2(snapshot.data?[index].name);
+                            //     // then collection
 
-                                // },
-                                icon: const Icon(
-                                    color: Colors.white70,
-                                    Icons.delete_outline_rounded)),
+                            //     // },
+                            //     icon: const Icon(
+                            //         color: Colors.white70,
+                            //         Icons.delete_outline_rounded)),
                             onTap: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
