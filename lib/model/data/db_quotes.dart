@@ -55,7 +55,7 @@ class DBQuotes {
     ''');
           database.execute('''
       CREATE TABLE UserCollections(
-        id INTEGER AUTOINCREMENT,
+        id INTEGER AUTO INCREMENT,
         collectionName TEXT PRIMARY KEY
       ) 
     ''');

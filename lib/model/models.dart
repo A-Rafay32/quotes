@@ -62,34 +62,5 @@ class AuthorCollection {
   }
 }
 
-List<Quote> quotelist = [
-  Quote(
-      // id: 1,
-      isFav: 0,
-      collectionName: "Rene",
-      author: "Rene",
-      quote: "Hell is another people"),
-  Quote(
-      // id: 2,
-      isFav: 0,
-      collectionName: "Carlos",
-      author: "Carlos",
-      quote: "Hell is me"),
-  Quote(
-      // id: 3,
-      isFav: 0,
-      collectionName: "Kant",
-      author: "Kant",
-      quote: "Hell sex"),
-  Quote(
-      // id: 4,
-      isFav: 0,
-      collectionName: "Carlos",
-      author: "Carlos",
-      quote: "Just Fuck it"),
-];
-List<AuthorCollection> collectionList = [
-  AuthorCollection(id: 0, name: "Rene"),
-  AuthorCollection(id: 1, name: "Carlos"),
-  AuthorCollection(id: 2, name: "Kant"),
-];
+List<Quote> quotelist = [];
+List<AuthorCollection> collectionList = [];

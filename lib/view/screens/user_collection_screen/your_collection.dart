@@ -36,6 +36,7 @@ class _YourCollectionScreenState extends State<YourCollectionScreen> {
     double h = MediaQuery.sizeOf(context).height;
     double w = MediaQuery.sizeOf(context).width;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: kbackgroundColor,
@@ -52,9 +53,10 @@ class _YourCollectionScreenState extends State<YourCollectionScreen> {
           const SizedBox(
             height: 10,
           ),
-          SizedBox(
+          Container(
             height: h * 0.7,
             width: w,
+            padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Consumer<Model>(
               builder: (context, model, child) {
                 return FutureBuilder(
@@ -109,6 +111,8 @@ class CreateCollection extends StatelessWidget {
           builder: (context) => AlertDialog(
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            actionsPadding: const EdgeInsets.symmetric(horizontal: 10),
+            actionsAlignment: MainAxisAlignment.spaceBetween,
             actions: [
               TextButton(
                   onPressed: () {
@@ -142,41 +146,33 @@ class CreateCollection extends StatelessWidget {
                         color: PopupCardColor,
                       )))
             ],
-            content: SizedBox(
-              height: 110,
-              width: 200,
-              // padding: const EdgeInsets.all(10),
-              child: Column(
-                children: [
-                  const Text("New Collection",
-                      style: TextStyle(
-                          fontFamily: "Kanit",
-                          fontWeight: FontWeight.w500,
-                          fontSize: 19,
-                          color: Colors.white70)),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextField(
-                    controller: collectionController,
-                    cursorColor: Colors.white70,
-                    // cursorHeight: 19,
-                    style: const TextStyle(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text("New Collection",
+                    style: TextStyle(
                         fontFamily: "Kanit",
+                        fontWeight: FontWeight.w500,
                         fontSize: 19,
-                        color: Colors.white70),
-                    decoration: InputDecoration(
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide:
-                                const BorderSide(color: Colors.white60)),
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide:
-                                const BorderSide(color: Colors.white60))),
-                  )
-                ],
-              ),
+                        color: Colors.white70)),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextField(
+                  controller: collectionController,
+                  cursorColor: Colors.white70,
+                  // cursorHeight: 19,
+                  style: const TextStyle(
+                      fontFamily: "Kanit", fontSize: 19, color: Colors.white70),
+                  decoration: InputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: const BorderSide(color: Colors.white60)),
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: const BorderSide(color: Colors.white60))),
+                )
+              ],
             ),
             backgroundColor: kbackgroundColor,
           ),

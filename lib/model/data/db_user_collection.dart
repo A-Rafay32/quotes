@@ -12,7 +12,7 @@ class DBUserCollection {
         data.length,
         (index) => UserCollection(
               collectionName: data[index]["collectionName"],
-              id: data[index]["id"],
+              id: 0,
             ));
   }
 

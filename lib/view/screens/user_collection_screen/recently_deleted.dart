@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:quotes/utils/helper.dart';
 import 'package:quotes/view/widgets/quote_card.dart';
 import 'package:quotes/view/widgets/snackbar.dart';
 
@@ -34,6 +35,15 @@ class _RecentlyDelScreenState extends State<RecentlyDelScreen> {
     return Scaffold(
       appBar: AppBar(
         actions: [
+          TextButton(
+              onPressed: () async {
+                DateTime time = await getTimer();
+                if (time.day > 10) {
+                  Provider.of<Model>(context, listen: false)
+                      .delRecentDelTable();
+                }
+              },
+              child: Container()),
           IconButton(
               tooltip: "Delete All",
               onPressed: () {

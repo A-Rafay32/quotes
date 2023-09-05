@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:quotes/utils/helper.dart';
 import 'package:quotes/view/widgets/insert_text.dart';
 import 'package:quotes/view/widgets/quote_card.dart';
 import 'package:quotes/view/widgets/snackbar.dart';
@@ -88,7 +89,7 @@ class _ScaffoldBodyState extends State<ScaffoldBody> {
                       "author": snapshot.data![index].author,
                       "isFav": snapshot.data![index].isFav,
                     });
-
+                    setTimer();
                     // delete the quote from everywhere
                     model.delQuote(snapshot.data?[index]);
                   },

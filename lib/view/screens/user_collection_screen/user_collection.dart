@@ -22,19 +22,19 @@ class UserCollectionScreen extends StatefulWidget {
 }
 
 class _UserCollectionScreenState extends State<UserCollectionScreen> {
-  void test() async {
-    List<Quote> data =
-        await DBUserCollection.getUserCollection(widget.collectionName);
-    for (int i = 0; i < data.length; ++i) {
-      print(data[i].toMap());
-    }
-  }
+  // void test() async {
+  //   List<Quote> data =
+  //       await DBUserCollection.getUserCollection(widget.collectionName);
+  //   for (int i = 0; i < data.length; ++i) {
+  //     print(data[i].toMap());
+  //   }
+  // }
 
   @override
   void initState() {
     Provider.of<Model>(context, listen: false).futureUserAlbum =
         DBUserCollection.getUserCollection(widget.collectionName);
-    test();
+
     super.initState();
   }
 

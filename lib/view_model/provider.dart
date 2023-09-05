@@ -32,7 +32,7 @@ class Model extends ChangeNotifier {
   };
 
   void init() async {
-    DBQuotes.openDB();
+    await DBQuotes.openDB();
     futureC = DBAuthorCollection.getAuthorCollection();
     futureQ = DBQuotes.getQuotes();
     futureFav = DBFavorites.getFavQuotes();
@@ -43,19 +43,6 @@ class Model extends ChangeNotifier {
     List<Quote> data = await DBQuotes.getQuotes();
     id = data.length;
     print("id : $id");
-  }
-
-  Future start() async {
-    var id = quotelist.length;
-    await DBQuotes.openDB();
-    for (int i = 0; i < quotelist.length; ++i) {
-      await DBQuotes.insertQuote(quotelist[i]);
-      // await DBHelper.addToFav(quotelist[i]);
-    }
-
-    await DBAuthorCollection.insertAuthorCollection(collectionList[0]);
-    await DBAuthorCollection.insertAuthorCollection(collectionList[1]);
-    await DBAuthorCollection.insertAuthorCollection(collectionList[2]);
   }
 
   void addQuote() async {
@@ -106,29 +93,6 @@ class Model extends ChangeNotifier {
     setId();
     notifyListeners();
   }
-
-  // void delQuotesOfCollection2(Quote quote) async {
-  //   // delete collection
-  //   await DBHelper.delQuote(quote);
-  //   // check if no quote exist in a collection
-  //   List<Quote> data = await DBHelper.testRI(quote.author);
-  //   print("data : $data ");
-  //   if (data.isEmpty) {
-  //     // then delete the collection
-  //     // await DBHelper.delCollection(collection)
-  //     await DBHelper.delCollection(quote.author);
-  //   }
-  //   // delete collection
-
-  //   //update futures
-  //   futureC = DBHelper.getCollection();
-  //   futureQ = DBHelper.getQuotes();
-  //   futureFav = DBHelper.getFavQuotes();
-  //   futureA = DBHelper.testRI(quote.author);
-  //   //update Id
-  //   setId();
-  //   notifyListeners();
-  // }
 
   void delQuote(Quote? quote) async {
     // delete collection
@@ -236,7 +200,7 @@ class Model extends ChangeNotifier {
     futureUC = DBUserCollection.getUserCollections();
     notifyListeners();
   }
-
+  
   void delRecentDelTable() async {
     await DBQuotes.db?.delete("recentlyDel");
     futureDel = DBQuotes.getQuotesFrom("recentlyDel");

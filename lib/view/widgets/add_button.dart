@@ -118,8 +118,12 @@ class _AddTodoPopupCard extends StatelessWidget {
                     TextButton(
                       onPressed: onPressed,
                       child: const Text(
-                        'Add',
-                        style: TextStyle(color: Colors.black),
+                        'ADD',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontFamily: "Kanit",
+                            fontSize: 21,
+                            fontWeight: FontWeight.w600),
                       ),
                     ),
                   ],
